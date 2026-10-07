@@ -188,10 +188,42 @@ export async function initializeDatabase(): Promise<void> {
       "https://www.facebook.com/",
     );
 
-  if (!store.prepare("SELECT username FROM admin_users WHERE username = ?").get("admin")) {
+  const configuredAdminUsername = process.env.ADMIN_USERNAME?.trim() || "admin";
+  const configuredAdminPassword = process.env.ADMIN_PASSWORD;
+  const adminUsers = store
+    .prepare("SELECT username, password_hash FROM admin_users ORDER BY username")
+    .all();
+  const adminUser =
+    adminUsers.find((user) => user.username === configuredAdminUsername) ??
+    adminUsers.find((user) => user.username === "admin") ??
+    adminUsers[0];
+
+  if (!adminUser) {
     store
       .prepare("INSERT INTO admin_users (username, password_hash) VALUES (?, ?)")
-      .run("admin", bcrypt.hashSync("adminpass123", 12));
+      .run(
+        configuredAdminUsername,
+        bcrypt.hashSync(configuredAdminPassword ?? "adminpass123", 12),
+      );
+  } else {
+    const existingUsername = String(adminUser.username);
+    const existingPasswordHash = String(adminUser.password_hash);
+    const passwordHash =
+      configuredAdminPassword &&
+      !bcrypt.compareSync(configuredAdminPassword, existingPasswordHash)
+        ? bcrypt.hashSync(configuredAdminPassword, 12)
+        : existingPasswordHash;
+
+    if (
+      existingUsername !== configuredAdminUsername ||
+      passwordHash !== existingPasswordHash
+    ) {
+      store
+        .prepare(
+          "UPDATE admin_users SET username = ?, password_hash = ? WHERE username = ?",
+        )
+        .run(configuredAdminUsername, passwordHash, existingUsername);
+    }
   }
 
   const productCount = Number(
