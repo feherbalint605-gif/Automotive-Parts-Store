@@ -1,0 +1,47 @@
+Create a modern, responsive E-commerce web application with a Custom Hidden Admin Panel. 
+
+### TECH STACK & SETUP:
+- Frontend: HTML5, Tailwind CSS (via CDN or standard setup), JavaScript (React or Vanilla JS)
+- Backend: Node.js with Express
+- Database: SQLite (using Better-SQLite3 or Prisma) to easily store products, orders, contact messages, and site content locally without complex setups.
+- Session Management: Express-session / JWT for admin authentication.
+
+### PRODUCT CATEGORIES & DEFAULT CONTENT:
+1. Magnetic License Plates (Mágneses rendszámtábla KERET)
+2. Carbon Fiber Parts (Karbon alkatrészek)
+3. Custom 3D Printing (3D Nyomtatás)
+
+### USER-FACING FRONTEND (MAIN SITE):
+1. **Header**: Logo, Navigation menu (Products, Custom 3D Order Request, About, Contact), Cart Icon with item counter.
+2. **Hero Section**: Highlighting custom auto parts and 3D printing services.
+3. **Product Catalog**: Filter by category, product card with image, title, price, description, and "Add to Cart" button.
+4. **Custom 3D Print Request Form**: A special contact section where users can fill out a form with name, email, project details, and a dummy file upload input for 3D STL files.
+5. **Checkout System**: Simple cart modal / checkout page asking for Shipping Name, Address, Email, Phone number, and Payment Method (Cash on Delivery / Direct Bank Transfer).
+6. **Footer**: Social links, contact info, copyright.
+
+### HIDDEN ADMIN PANEL ACCESS (EASTER EGG):
+- Implement a click counter on the main Header Logo.
+- **Trigger**: If the user clicks the main logo 8 times within a 10-second window, automatically redirect them to `/admin-login`.
+- Provide a clear visual or console clue/feedback in development if needed.
+
+### ADMIN FEATURES:
+1. **Admin Login Page (`/admin-login`)**:
+   - Simple secure login form. Default credentials: username `admin`, password `adminpass123` (store securely using bcrypt).
+2. **Dashboard Overview**:
+   - Stats summary: Total Orders, Total Messages, Active Products.
+3. **Orders Management**:
+   - List all incoming orders with customer details, ordered items, total price, order status (Pending, Shipped, Cancelled).
+   - Ability to update order status.
+4. **Questions / 3D Print Requests**:
+   - View submitted custom 3D printing requests and contact messages.
+5. **CMS / Page Visual Appearance Editor**:
+   - A dedicated tab inside the admin panel to modify the public website's text and images dynamically.
+   - Edit Hero Title, Hero Subtitle, Hero Background Image URL.
+   - Manage Products: Add new products (Title, Price, Category, Description, Image URL), Edit existing, or Delete products.
+   - Save changes instantly to the SQLite database so the frontend updates automatically.
+
+### UI / STYLING REQUIREMENTS:
+- Modern, clean, dark-mode automotive / tech theme (Carbon fiber / dark slate grey accents with neon orange or red highlight colors).
+- Mobile-responsive layout.
+
+Please build the project step-by-step, ensuring clean directory structure, clean backend routes (`/api/products`, `/api/orders`, `/api/messages`, `/api/content`, `/api/admin/login`), and a working database initialization script.

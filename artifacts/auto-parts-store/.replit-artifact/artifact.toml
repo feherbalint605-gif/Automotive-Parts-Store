@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Auto Parts Store"
+description = "A responsive storefront for magnetic license plate frames, carbon fiber parts, and custom 3D printing, with checkout, quote requests, and a private admin dashboard."
+version = "1.0.0"
+id = "artifacts/auto-parts-store"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22045
+
+[services.development]
+run = "pnpm --filter @workspace/auto-parts-store run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/auto-parts-store", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/auto-parts-store/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22045"
+BASE_PATH = "/"
