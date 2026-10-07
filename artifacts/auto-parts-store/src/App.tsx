@@ -27,7 +27,7 @@ const categories: { id: ProductCategory | 'all'; label: string; code: string }[]
   { id: 'carbon_fiber_parts', label: 'Carbon fiber', code: '03' },
   { id: 'custom_3d_printing', label: 'Custom 3D prints', code: '04' },
 ];
-const money = (n: number) => new Intl.NumberFormat('hu-HU', { style: 'currency', currency: 'HUF' }).format(n);
+const money = (n: number) => new Intl.NumberFormat('hu-HU', { style: 'currency', currency: 'HUF', maximumFractionDigits: 0 }).format(n);
 const labelCategory = (s: string) => s.replaceAll('_', ' ');
 const errMessage = (error: unknown) => error instanceof Error ? error.message : 'Something went wrong. Please try again.';
 const heroAsset = '/workshop-hero.png';

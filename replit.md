@@ -1,44 +1,57 @@
-# [Project name]
+# Redline/Works Auto Parts Store
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A responsive automotive-parts storefront with checkout, custom 3D-print requests, and a private admin dashboard.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm --filter @workspace/auto-parts-store run dev` — run the storefront
+- `pnpm --filter @workspace/api-server run dev` — run the Express API at `/api`
+- `pnpm --filter @workspace/api-server run db:init` — initialize and seed the local SQLite store
+- `pnpm --filter @workspace/api-spec run codegen` — regenerate client hooks and Zod schemas from OpenAPI
+- `pnpm run typecheck` — typecheck the workspace
+- Required env: `SESSION_SECRET` — signs admin session cookies
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Frontend: React + Vite
 - API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Database: SQLite through sql.js/WebAssembly, persisted at `artifacts/api-server/data/store.sqlite`
+- API validation and client generation: OpenAPI, Zod, and Orval
+- API build: esbuild
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/auto-parts-store/` — public storefront and admin UI
+- `artifacts/api-server/src/routes/storefront.ts` — product, order, message, content, and admin endpoints
+- `artifacts/api-server/src/lib/store.ts` — SQLite initialization, seed data, and persistence
+- `artifacts/api-server/src/scripts/init-database.ts` — standalone database initializer
+- `lib/api-spec/openapi.yaml` — API contract source of truth
+- `lib/api-client-react/` and `lib/api-zod/` — generated API hooks, types, and validators
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- SQLite is the requested storage for this app. The server uses sql.js/WebAssembly and persists an SQLite file; do not replace it with another database without the user's direction.
+- The API is served under `/api`; the web app calls it on the same origin.
+- Admin cookies are signed with `SESSION_SECRET`; the seeded password is hashed with bcrypt.
+- The 3D-print picker is intentionally a filename-only input; it does not upload STL bytes.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Browse and filter magnetic license plate frames, carbon-fiber parts, and custom 3D prints.
+- Add products to a cart and submit orders for cash on delivery or bank transfer.
+- Send contact messages and custom STL print requests.
+- Use the hidden logo-click sequence to reach the admin login; manage orders, messages, products, and public site content after sign-in.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+No additional standing preferences recorded.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- The initial admin account uses the credentials from the build brief. Change the password before exposing the dashboard publicly.
+- The SQLite database is a local file; verify the deployment's filesystem persistence and instance model before using it for live orders.
+- The server needs `SESSION_SECRET` at runtime for admin login.
 
 ## Pointers
 

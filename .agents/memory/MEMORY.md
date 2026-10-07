@@ -1,0 +1,1 @@
+- [Workspace package installs](workspace-package-installs.md) — target a leaf package with a pnpm filter when the central installer tries to modify root dependencies.

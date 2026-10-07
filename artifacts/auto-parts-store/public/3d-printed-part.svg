@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="70" x2="1120" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#272A2B"/>
+      <stop offset=".55" stop-color="#161819"/>
+      <stop offset="1" stop-color="#0E1011"/>
+    </linearGradient>
+    <linearGradient id="body" x1="360" y1="260" x2="840" y2="610" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5A5D5B"/>
+      <stop offset=".35" stop-color="#303433"/>
+      <stop offset="1" stop-color="#171A19"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="440" y1="280" x2="790" y2="570" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#848783"/>
+      <stop offset=".48" stop-color="#454A47"/>
+      <stop offset="1" stop-color="#272B29"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(0 390 -550 0 675 400)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E9632C" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#E9632C" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M42 0H0V42" stroke="#AEB0AA" stroke-opacity=".055"/>
+    </pattern>
+    <filter id="shadow" x="214" y="168" width="772" height="518" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="23"/>
+    </filter>
+  </defs>
+  <path fill="url(#bg)" d="M0 0h1200v800H0z"/>
+  <path fill="url(#glow)" d="M0 0h1200v800H0z"/>
+  <path fill="url(#grid)" d="M0 0h1200v800H0z"/>
+  <ellipse cx="616" cy="565" fill="#000" fill-opacity=".8" filter="url(#shadow)" rx="330" ry="85"/>
+  <g transform="rotate(-8 600 420)">
+    <path d="m300 340 125-110 407 12 88 81-23 205-123 84-404-18-93-83 23-171Z" fill="#101312" stroke="#777C77" stroke-opacity=".5" stroke-width="3"/>
+    <path d="m328 347 112-83 365 10 81 73-18 178-107 71-365-17-82-70 14-162Z" fill="url(#body)" stroke="#979B96" stroke-opacity=".62" stroke-width="4"/>
+    <path d="m388 353 72-43 277 7 50 43-15 116-72 43-278-13-49-43 15-110Z" fill="#101312" stroke="url(#rim)" stroke-width="18"/>
+    <path d="m410 360 61-28 253 7 42 34-13 92-61 34-254-12-41-35 13-92Z" fill="#080A09" stroke="#242927" stroke-width="5"/>
+    <path d="m353 318 56-39 28 1-56 41-10 134-24-19 6-118ZM794 323l41 37-16 144-34 23 16-151-35-30 28-23Z" fill="#747A75" fill-opacity=".72"/>
+    <path d="m347 494 61 48 369 17 104-66-1 29-111 72-382-18-49-42 9-40Z" fill="#111413" stroke="#606661" stroke-opacity=".55" stroke-width="3"/>
+    <path d="m452 269 13 12-13 12-13-12 13-12ZM772 279l13 12-13 12-13-12 13-12ZM362 511l13 12-13 12-13-12 13-12ZM773 535l13 12-13 12-13-12 13-12Z" fill="#D76534"/>
+    <path d="m482 291 2 13m23-12 2 13m23-12 2 13m23-12 2 13m23-12 2 13m23-12 2 13m23-12 2 13m23-12 2 13m23-12 2 13m23-12 2 13" stroke="#BCC0B9" stroke-opacity=".3" stroke-width="2"/>
+    <path d="m457 538 2 13m24-12 2 13m24-12 2 13m24-12 2 13m24-12 2 13m24-12 2 13m24-12 2 13m24-12 2 13m24-12 2 13m24-12 2 13" stroke="#BCC0B9" stroke-opacity=".22" stroke-width="2"/>
+  </g>
+  <path d="M48 64h50" stroke="#E9632C" stroke-width="3"/>
+  <text x="116" y="70" fill="#C7C8C1" font-family="monospace" font-size="17" letter-spacing="5">MADE TO FIT</text>
+  <text x="1058" y="744" fill="#E9632C" font-family="monospace" font-size="17" letter-spacing="4">RW / 003</text>
+</svg>

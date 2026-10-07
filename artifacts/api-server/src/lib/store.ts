@@ -221,7 +221,7 @@ export async function initializeDatabase(): Promise<void> {
         description: "A made-to-order print for your car, interior, workshop, or one-off project.",
         price: 8900,
         imageUrl:
-          "https://images.unsplash.com/photo-1631556097152-c39479bbff86?auto=format&fit=crop&w=1200&q=85",
+          "/3d-printed-part.svg",
       },
     ];
     const insertProduct = store.prepare(
