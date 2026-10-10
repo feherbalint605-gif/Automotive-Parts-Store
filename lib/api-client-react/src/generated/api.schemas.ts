@@ -144,6 +144,82 @@ export interface Message {
   createdAt: string;
 }
 
+export interface HomePageTextBox {
+  /** @minLength 1 */
+  id: string;
+  /** @maxLength 200 */
+  title: string;
+  /** @maxLength 5000 */
+  bodyText: string;
+}
+
+export interface HomePageFeatureItem {
+  /** @minLength 1 */
+  id: string;
+  /** @maxLength 200 */
+  title: string;
+  /** @maxLength 2000 */
+  bodyText: string;
+}
+
+export type HomePageSectionContentFormKind = typeof HomePageSectionContentFormKind[keyof typeof HomePageSectionContentFormKind];
+
+
+export const HomePageSectionContentFormKind = {
+  contact: 'contact',
+  print_request: 'print_request',
+} as const;
+
+export interface HomePageSectionContent {
+  /** @maxLength 200 */
+  title: string;
+  /** @maxLength 500 */
+  subtitle: string;
+  /** @maxLength 10000 */
+  bodyText: string;
+  /** @maxLength 2048 */
+  imageUrl: string;
+  /** @maxLength 100 */
+  buttonText: string;
+  /** @maxLength 2048 */
+  buttonUrl: string;
+  formKind: HomePageSectionContentFormKind;
+  /** @maxItems 12 */
+  textBoxes: HomePageTextBox[];
+  /** @maxItems 12 */
+  featureItems: HomePageFeatureItem[];
+}
+
+export type HomePageSectionType = typeof HomePageSectionType[keyof typeof HomePageSectionType];
+
+
+export const HomePageSectionType = {
+  hero: 'hero',
+  banner: 'banner',
+  text_image: 'text_image',
+  features: 'features',
+  custom_form: 'custom_form',
+} as const;
+
+export type HomePageSectionLayout = typeof HomePageSectionLayout[keyof typeof HomePageSectionLayout];
+
+
+export const HomePageSectionLayout = {
+  image_left: 'image_left',
+  image_right: 'image_right',
+  centered: 'centered',
+} as const;
+
+export interface HomePageSection {
+  /** @minLength 1 */
+  id: string;
+  type: HomePageSectionType;
+  /** @minimum 0 */
+  order: number;
+  layout: HomePageSectionLayout;
+  content: HomePageSectionContent;
+}
+
 export interface SiteContent {
   heroTitle: string;
   heroSubtitle: string;
@@ -154,6 +230,8 @@ export interface SiteContent {
   contactPhone: string;
   instagramUrl: string;
   facebookUrl: string;
+  /** @maxItems 25 */
+  sections: HomePageSection[];
 }
 
 export interface SiteContentInput {
@@ -167,6 +245,8 @@ export interface SiteContentInput {
   contactPhone: string;
   instagramUrl: string;
   facebookUrl: string;
+  /** @maxItems 25 */
+  sections: HomePageSection[];
 }
 
 export interface AdminLoginInput {

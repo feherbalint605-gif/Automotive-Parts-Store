@@ -109,6 +109,39 @@ export const CreateMessageResponse = zod.object({
 /**
  * @summary Get public site content
  */
+
+export const getSiteContentResponseSectionsItemOrderMin = 0;
+
+export const getSiteContentResponseSectionsItemContentTitleMax = 200;
+
+export const getSiteContentResponseSectionsItemContentSubtitleMax = 500;
+
+export const getSiteContentResponseSectionsItemContentBodyTextMax = 10000;
+
+export const getSiteContentResponseSectionsItemContentImageUrlMax = 2048;
+
+export const getSiteContentResponseSectionsItemContentButtonTextMax = 100;
+
+export const getSiteContentResponseSectionsItemContentButtonUrlMax = 2048;
+
+
+export const getSiteContentResponseSectionsItemContentTextBoxesItemTitleMax = 200;
+
+export const getSiteContentResponseSectionsItemContentTextBoxesItemBodyTextMax = 5000;
+
+export const getSiteContentResponseSectionsItemContentTextBoxesMax = 12;
+
+
+export const getSiteContentResponseSectionsItemContentFeatureItemsItemTitleMax = 200;
+
+export const getSiteContentResponseSectionsItemContentFeatureItemsItemBodyTextMax = 2000;
+
+export const getSiteContentResponseSectionsItemContentFeatureItemsMax = 12;
+
+export const getSiteContentResponseSectionsMax = 25;
+
+
+
 export const GetSiteContentResponse = zod.object({
   "heroTitle": zod.string(),
   "heroSubtitle": zod.string(),
@@ -118,7 +151,32 @@ export const GetSiteContentResponse = zod.object({
   "contactEmail": zod.string(),
   "contactPhone": zod.string(),
   "instagramUrl": zod.string(),
-  "facebookUrl": zod.string()
+  "facebookUrl": zod.string(),
+  "sections": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "type": zod.enum(['hero', 'banner', 'text_image', 'features', 'custom_form']),
+  "order": zod.number().int().min(getSiteContentResponseSectionsItemOrderMin),
+  "layout": zod.enum(['image_left', 'image_right', 'centered']),
+  "content": zod.object({
+  "title": zod.string().max(getSiteContentResponseSectionsItemContentTitleMax),
+  "subtitle": zod.string().max(getSiteContentResponseSectionsItemContentSubtitleMax),
+  "bodyText": zod.string().max(getSiteContentResponseSectionsItemContentBodyTextMax),
+  "imageUrl": zod.string().max(getSiteContentResponseSectionsItemContentImageUrlMax),
+  "buttonText": zod.string().max(getSiteContentResponseSectionsItemContentButtonTextMax),
+  "buttonUrl": zod.string().max(getSiteContentResponseSectionsItemContentButtonUrlMax),
+  "formKind": zod.enum(['contact', 'print_request']),
+  "textBoxes": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "title": zod.string().max(getSiteContentResponseSectionsItemContentTextBoxesItemTitleMax),
+  "bodyText": zod.string().max(getSiteContentResponseSectionsItemContentTextBoxesItemBodyTextMax)
+})).max(getSiteContentResponseSectionsItemContentTextBoxesMax),
+  "featureItems": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "title": zod.string().max(getSiteContentResponseSectionsItemContentFeatureItemsItemTitleMax),
+  "bodyText": zod.string().max(getSiteContentResponseSectionsItemContentFeatureItemsItemBodyTextMax)
+})).max(getSiteContentResponseSectionsItemContentFeatureItemsMax)
+})
+})).max(getSiteContentResponseSectionsMax)
 })
 
 
@@ -237,6 +295,37 @@ export const ListAdminMessagesResponse = zod.array(ListAdminMessagesResponseItem
  */
 
 
+export const updateSiteContentBodySectionsItemOrderMin = 0;
+
+export const updateSiteContentBodySectionsItemContentTitleMax = 200;
+
+export const updateSiteContentBodySectionsItemContentSubtitleMax = 500;
+
+export const updateSiteContentBodySectionsItemContentBodyTextMax = 10000;
+
+export const updateSiteContentBodySectionsItemContentImageUrlMax = 2048;
+
+export const updateSiteContentBodySectionsItemContentButtonTextMax = 100;
+
+export const updateSiteContentBodySectionsItemContentButtonUrlMax = 2048;
+
+
+export const updateSiteContentBodySectionsItemContentTextBoxesItemTitleMax = 200;
+
+export const updateSiteContentBodySectionsItemContentTextBoxesItemBodyTextMax = 5000;
+
+export const updateSiteContentBodySectionsItemContentTextBoxesMax = 12;
+
+
+export const updateSiteContentBodySectionsItemContentFeatureItemsItemTitleMax = 200;
+
+export const updateSiteContentBodySectionsItemContentFeatureItemsItemBodyTextMax = 2000;
+
+export const updateSiteContentBodySectionsItemContentFeatureItemsMax = 12;
+
+export const updateSiteContentBodySectionsMax = 25;
+
+
 
 export const UpdateSiteContentBody = zod.object({
   "heroTitle": zod.string().min(1),
@@ -247,8 +336,66 @@ export const UpdateSiteContentBody = zod.object({
   "contactEmail": zod.string(),
   "contactPhone": zod.string(),
   "instagramUrl": zod.string(),
-  "facebookUrl": zod.string()
+  "facebookUrl": zod.string(),
+  "sections": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "type": zod.enum(['hero', 'banner', 'text_image', 'features', 'custom_form']),
+  "order": zod.number().int().min(updateSiteContentBodySectionsItemOrderMin),
+  "layout": zod.enum(['image_left', 'image_right', 'centered']),
+  "content": zod.object({
+  "title": zod.string().max(updateSiteContentBodySectionsItemContentTitleMax),
+  "subtitle": zod.string().max(updateSiteContentBodySectionsItemContentSubtitleMax),
+  "bodyText": zod.string().max(updateSiteContentBodySectionsItemContentBodyTextMax),
+  "imageUrl": zod.string().max(updateSiteContentBodySectionsItemContentImageUrlMax),
+  "buttonText": zod.string().max(updateSiteContentBodySectionsItemContentButtonTextMax),
+  "buttonUrl": zod.string().max(updateSiteContentBodySectionsItemContentButtonUrlMax),
+  "formKind": zod.enum(['contact', 'print_request']),
+  "textBoxes": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "title": zod.string().max(updateSiteContentBodySectionsItemContentTextBoxesItemTitleMax),
+  "bodyText": zod.string().max(updateSiteContentBodySectionsItemContentTextBoxesItemBodyTextMax)
+})).max(updateSiteContentBodySectionsItemContentTextBoxesMax),
+  "featureItems": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "title": zod.string().max(updateSiteContentBodySectionsItemContentFeatureItemsItemTitleMax),
+  "bodyText": zod.string().max(updateSiteContentBodySectionsItemContentFeatureItemsItemBodyTextMax)
+})).max(updateSiteContentBodySectionsItemContentFeatureItemsMax)
 })
+})).max(updateSiteContentBodySectionsMax)
+})
+
+
+export const updateSiteContentResponseSectionsItemOrderMin = 0;
+
+export const updateSiteContentResponseSectionsItemContentTitleMax = 200;
+
+export const updateSiteContentResponseSectionsItemContentSubtitleMax = 500;
+
+export const updateSiteContentResponseSectionsItemContentBodyTextMax = 10000;
+
+export const updateSiteContentResponseSectionsItemContentImageUrlMax = 2048;
+
+export const updateSiteContentResponseSectionsItemContentButtonTextMax = 100;
+
+export const updateSiteContentResponseSectionsItemContentButtonUrlMax = 2048;
+
+
+export const updateSiteContentResponseSectionsItemContentTextBoxesItemTitleMax = 200;
+
+export const updateSiteContentResponseSectionsItemContentTextBoxesItemBodyTextMax = 5000;
+
+export const updateSiteContentResponseSectionsItemContentTextBoxesMax = 12;
+
+
+export const updateSiteContentResponseSectionsItemContentFeatureItemsItemTitleMax = 200;
+
+export const updateSiteContentResponseSectionsItemContentFeatureItemsItemBodyTextMax = 2000;
+
+export const updateSiteContentResponseSectionsItemContentFeatureItemsMax = 12;
+
+export const updateSiteContentResponseSectionsMax = 25;
+
+
 
 export const UpdateSiteContentResponse = zod.object({
   "heroTitle": zod.string(),
@@ -259,7 +406,32 @@ export const UpdateSiteContentResponse = zod.object({
   "contactEmail": zod.string(),
   "contactPhone": zod.string(),
   "instagramUrl": zod.string(),
-  "facebookUrl": zod.string()
+  "facebookUrl": zod.string(),
+  "sections": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "type": zod.enum(['hero', 'banner', 'text_image', 'features', 'custom_form']),
+  "order": zod.number().int().min(updateSiteContentResponseSectionsItemOrderMin),
+  "layout": zod.enum(['image_left', 'image_right', 'centered']),
+  "content": zod.object({
+  "title": zod.string().max(updateSiteContentResponseSectionsItemContentTitleMax),
+  "subtitle": zod.string().max(updateSiteContentResponseSectionsItemContentSubtitleMax),
+  "bodyText": zod.string().max(updateSiteContentResponseSectionsItemContentBodyTextMax),
+  "imageUrl": zod.string().max(updateSiteContentResponseSectionsItemContentImageUrlMax),
+  "buttonText": zod.string().max(updateSiteContentResponseSectionsItemContentButtonTextMax),
+  "buttonUrl": zod.string().max(updateSiteContentResponseSectionsItemContentButtonUrlMax),
+  "formKind": zod.enum(['contact', 'print_request']),
+  "textBoxes": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "title": zod.string().max(updateSiteContentResponseSectionsItemContentTextBoxesItemTitleMax),
+  "bodyText": zod.string().max(updateSiteContentResponseSectionsItemContentTextBoxesItemBodyTextMax)
+})).max(updateSiteContentResponseSectionsItemContentTextBoxesMax),
+  "featureItems": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "title": zod.string().max(updateSiteContentResponseSectionsItemContentFeatureItemsItemTitleMax),
+  "bodyText": zod.string().max(updateSiteContentResponseSectionsItemContentFeatureItemsItemBodyTextMax)
+})).max(updateSiteContentResponseSectionsItemContentFeatureItemsMax)
+})
+})).max(updateSiteContentResponseSectionsMax)
 })
 
 

@@ -1,0 +1,33 @@
+Refactor the "SITE CONTENT" section in the Admin Panel into a dynamic visual Section/Block Builder for the landing page.
+
+### GOAL:
+Replace the static content input fields in the Admin Panel with a flexible, modular Page Builder. This will allow admins to create, edit, reorder, and remove homepage sections dynamically (texts, image URLs, layouts, and extra text boxes).
+
+### DATA STORAGE (SQLite / Local JSON):
+- Update the existing SQLite database (or local JSON store) to save homepage sections as an ordered array of JSON section objects.
+- Each section object should hold:
+  - `id`: unique string
+  - `type`: section type ('hero', 'banner', 'text_image', 'features', 'custom_form')
+  - `order`: integer
+  - `layout`: layout style (e.g., 'image_left', 'image_right', 'centered')
+  - `content`: object with fields like title, subtitle, body_text, image_url, button_text, button_url, and optional text boxes/lists.
+
+### ADMIN PAGE BUILDER UI (`SITE CONTENT` tab):
+1. **Section List & Order Control**:
+   - Display the current homepage sections stacked visually in order.
+   - Include "Move Up" / "Move Down" buttons for each section to easily change their display order.
+   - Include an "Add New Section" button with a modal/dropdown to select section types.
+   - Include a "Delete Section" button for removing unwanted sections.
+2. **Section Editor Details**:
+   - Expanding a section reveals its editable fields:
+     - Editable text fields (Title, Subtitle, Body text).
+     - Ability to add or remove extra dynamic text boxes/bullet points.
+     - Image URL input field with a live image preview thumbnail.
+     - Layout Selector (e.g., dropdown/toggle to position image on the left or right, or center the text).
+3. **Save Action**:
+   - Provide a "Save Changes" button that sends the updated section array to the backend API (`/api/content`) and updates SQLite.
+
+### FRONTEND HOMEPAGE INTEGRATION:
+- Update the public main storefront homepage route/component to fetch the sections array from `/api/content` and render each section dynamically in the saved order with its selected layout and text/image content.
+
+Keep the implementation simple, lightweight, and fully compatible with the existing Node.js/Express backend and CSS theme.

@@ -12,6 +12,139 @@ import initSqlJs, { type Database as SqlDatabase, type SqlValue } from "sql.js";
 
 type SqlRow = Record<string, unknown>;
 type RunResult = { changes: number; lastInsertRowid: number };
+type SeedTextBox = { id: string; title: string; bodyText: string };
+type SeedFeature = { id: string; title: string; bodyText: string };
+type SeedSectionContent = {
+  title: string;
+  subtitle: string;
+  bodyText: string;
+  imageUrl: string;
+  buttonText: string;
+  buttonUrl: string;
+  formKind: "contact" | "print_request";
+  textBoxes: SeedTextBox[];
+  featureItems: SeedFeature[];
+};
+type SeedSection = {
+  id: string;
+  type: "hero" | "banner" | "text_image" | "features" | "custom_form";
+  order: number;
+  layout: "image_left" | "image_right" | "centered";
+  content: SeedSectionContent;
+};
+
+function defaultHomepageSections(siteContent: SqlRow): SeedSection[] {
+  const makeContent = (
+    values: Partial<SeedSectionContent> = {},
+  ): SeedSectionContent => ({
+    title: "",
+    subtitle: "",
+    bodyText: "",
+    imageUrl: "",
+    buttonText: "",
+    buttonUrl: "",
+    formKind: "print_request",
+    textBoxes: [],
+    featureItems: [],
+    ...values,
+  });
+
+  return [
+    {
+      id: "hero-main",
+      type: "hero",
+      order: 0,
+      layout: "centered",
+      content: makeContent({
+        title: String(siteContent.hero_title),
+        subtitle: String(siteContent.hero_subtitle),
+        imageUrl: String(siteContent.hero_image_url),
+        buttonText: "Shop the parts",
+        buttonUrl: "#shop",
+      }),
+    },
+    {
+      id: "banner-bench-notes",
+      type: "banner",
+      order: 1,
+      layout: "centered",
+      content: makeContent({
+        title: "No mystery parts.",
+        subtitle: "Bench notes / 001",
+        bodyText:
+          "We make, test, and ship the things we wanted for our own cars. Clear fitment notes, honest materials, and a human on the other end if something isn’t right.",
+        buttonText: "Meet the workshop",
+        buttonUrl: "#block-story-workshop",
+      }),
+    },
+    {
+      id: "custom-print-request",
+      type: "custom_form",
+      order: 2,
+      layout: "image_right",
+      content: makeContent({
+        title: "Custom print request",
+        subtitle: "02 / Made for your build",
+        bodyText:
+          "Send us a sketch, a reference, or the part you’ve been trying to replace. We’ll look at the shape, material, and whether a print is the right fix before we quote it.",
+        formKind: "print_request",
+      }),
+    },
+    {
+      id: "story-workshop",
+      type: "text_image",
+      order: 3,
+      layout: "image_right",
+      content: makeContent({
+        title: String(siteContent.about_title),
+        bodyText: String(siteContent.about_body),
+        imageUrl: "/workshop-hero.png",
+      }),
+    },
+    {
+      id: "features-workshop",
+      type: "features",
+      order: 4,
+      layout: "centered",
+      content: makeContent({
+        title: "Small details. Serious builds.",
+        subtitle: "03 / A small workshop",
+        bodyText:
+          "Considered parts for people who care how their car is put together.",
+        featureItems: [
+          {
+            id: "feature-tested",
+            title: "Real-world tested",
+            bodyText: "Parts are tried on real builds before they reach the shelf.",
+          },
+          {
+            id: "feature-small-runs",
+            title: "Small-run friendly",
+            bodyText: "Made in considered batches, with fit and finish in mind.",
+          },
+          {
+            id: "feature-workshop",
+            title: "Made by the workshop",
+            bodyText: "Packed by the people who made and tested each part.",
+          },
+        ],
+      }),
+    },
+    {
+      id: "contact-workshop",
+      type: "custom_form",
+      order: 5,
+      layout: "centered",
+      content: makeContent({
+        title: "Real people. Real replies.",
+        subtitle: "04 / Drop us a line",
+        bodyText:
+          "Need a fitment check or have a question before ordering? Tell us what you’re working on.",
+        formKind: "contact",
+      }),
+    },
+  ];
+}
 
 const moduleRequire = createRequire(import.meta.url);
 const databasePath = resolve(
@@ -161,13 +294,30 @@ export async function initializeDatabase(): Promise<void> {
       contact_email TEXT NOT NULL,
       contact_phone TEXT NOT NULL,
       instagram_url TEXT NOT NULL,
-      facebook_url TEXT NOT NULL
+      facebook_url TEXT NOT NULL,
+      sections_json TEXT NOT NULL DEFAULT '[]',
+      sections_initialized INTEGER NOT NULL DEFAULT 0
     );
     CREATE TABLE IF NOT EXISTS admin_users (
       username TEXT PRIMARY KEY,
       password_hash TEXT NOT NULL
     );
   `);
+
+  const siteContentColumns = store
+    .prepare("PRAGMA table_info(site_content)")
+    .all()
+    .map((column) => String(column.name));
+  if (!siteContentColumns.includes("sections_json")) {
+    store.exec(
+      "ALTER TABLE site_content ADD COLUMN sections_json TEXT NOT NULL DEFAULT '[]'",
+    );
+  }
+  if (!siteContentColumns.includes("sections_initialized")) {
+    store.exec(
+      "ALTER TABLE site_content ADD COLUMN sections_initialized INTEGER NOT NULL DEFAULT 0",
+    );
+  }
 
   store
     .prepare(
@@ -187,6 +337,20 @@ export async function initializeDatabase(): Promise<void> {
       "https://www.instagram.com/",
       "https://www.facebook.com/",
     );
+
+  const existingSiteContent = store
+    .prepare("SELECT * FROM site_content WHERE id = 1")
+    .get();
+  if (!existingSiteContent) {
+    throw new Error("Site content could not be initialized");
+  }
+  if (Number(existingSiteContent.sections_initialized) === 0) {
+    store
+      .prepare(
+        "UPDATE site_content SET sections_json = ?, sections_initialized = 1 WHERE id = 1",
+      )
+      .run(JSON.stringify(defaultHomepageSections(existingSiteContent)));
+  }
 
   const configuredAdminUsername = process.env.ADMIN_USERNAME?.trim() || "admin";
   const configuredAdminPassword = process.env.ADMIN_PASSWORD;

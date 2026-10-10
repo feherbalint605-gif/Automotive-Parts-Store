@@ -70,6 +70,7 @@ function toSiteContent(row: Record<string, unknown>) {
     contactPhone: String(row.contact_phone),
     instagramUrl: String(row.instagram_url),
     facebookUrl: String(row.facebook_url),
+    sections: JSON.parse(String(row.sections_json ?? "[]")),
   };
 }
 
@@ -413,7 +414,8 @@ router.put("/admin/content", requireAdmin, (req, res): void => {
       `UPDATE site_content SET
        hero_title = ?, hero_subtitle = ?, hero_image_url = ?, about_title = ?,
        about_body = ?, contact_email = ?, contact_phone = ?, instagram_url = ?,
-       facebook_url = ? WHERE id = 1`,
+        facebook_url = ?, sections_json = ?, sections_initialized = 1
+       WHERE id = 1`,
     )
     .run(
       content.heroTitle,
@@ -425,6 +427,7 @@ router.put("/admin/content", requireAdmin, (req, res): void => {
       content.contactPhone,
       content.instagramUrl,
       content.facebookUrl,
+      JSON.stringify(content.sections),
     );
   const updated = db().prepare("SELECT * FROM site_content WHERE id = 1").get();
   res.json(UpdateSiteContentResponse.parse(toSiteContent(updated!)));

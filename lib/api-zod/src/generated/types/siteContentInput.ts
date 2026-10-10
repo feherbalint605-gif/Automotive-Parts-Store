@@ -5,6 +5,7 @@
  * API for the automotive parts storefront and administration
  * OpenAPI spec version: 0.1.0
  */
+import type { HomePageSection } from './homePageSection';
 
 export interface SiteContentInput {
   /** @minLength 1 */
@@ -17,4 +18,6 @@ export interface SiteContentInput {
   contactPhone: string;
   instagramUrl: string;
   facebookUrl: string;
+  /** @maxItems 25 */
+  sections: HomePageSection[];
 }

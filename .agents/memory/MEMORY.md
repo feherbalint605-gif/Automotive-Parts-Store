@@ -1,1 +1,2 @@
 - [Workspace package installs](workspace-package-installs.md) — target a leaf package with a pnpm filter when the central installer tries to modify root dependencies.
+- [Homepage section builder](homepage-section-builder.md) — empty saved section lists are intentional; keep the catalog and customer forms available.

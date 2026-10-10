@@ -10,7 +10,7 @@ import {
   useListAdminProducts, getListAdminProductsQueryKey, useCreateAdminProduct,
   useUpdateAdminProduct, useDeleteAdminProduct
 } from '@workspace/api-client-react';
-import type { Message, Order, Product, ProductCategory, ProductInput, SiteContent } from '@workspace/api-client-react';
+import type { Message, Order, Product, ProductCategory, ProductInput } from '@workspace/api-client-react';
 import {
   ArrowRight, ArrowUpRight, BadgeCheck, Box, Check, CircleAlert, ClipboardList, FileUp, Instagram, LockKeyhole, Mail,
   Menu, Minus, Package, Plus, Search, Send, ShieldCheck, ShoppingBag, Trash2, Truck, X
@@ -18,6 +18,8 @@ import {
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { AdminSiteContentBuilder } from '@/components/admin-site-content-builder';
+import { HomepageSections } from '@/components/homepage-content';
 import NotFound from '@/pages/not-found';
 
 const queryClient = new QueryClient();
@@ -50,9 +52,9 @@ function Header({ count, onCart }: { count: number; onCart: () => void }) {
       </button>
       <nav className={`${mobile ? 'absolute left-0 right-0 top-[72px] flex flex-col border-b border-white/10 bg-[#141619] p-5' : 'hidden'} items-center gap-8 text-[11px] font-semibold uppercase tracking-[.14em] text-[#b1b1aa] md:flex`}>
         <a className="transition hover:text-[#f16b31]" href="#shop" onClick={() => setMobile(false)}>Shop</a>
-        <a className="transition hover:text-[#f16b31]" href="#story" onClick={() => setMobile(false)}>Our shop</a>
-        <a className="transition hover:text-[#f16b31]" href="#custom" onClick={() => setMobile(false)}>Custom work</a>
-        <a className="transition hover:text-[#f16b31]" href="#contact" onClick={() => setMobile(false)}>Contact</a>
+        <a className="transition hover:text-[#f16b31]" href="#block-story-workshop" onClick={() => setMobile(false)}>Our shop</a>
+        <a className="transition hover:text-[#f16b31]" href="#block-custom-print-request" onClick={() => setMobile(false)}>Custom work</a>
+        <a className="transition hover:text-[#f16b31]" href="#block-contact-workshop" onClick={() => setMobile(false)}>Contact</a>
       </nav>
       <div className="flex items-center gap-3">
         <button onClick={onCart} data-testid="button-open-cart" className="relative flex h-10 items-center gap-2 border border-white/10 px-3 text-xs font-bold uppercase tracking-wider transition hover:border-[#ed6228] hover:text-[#ed6228]">
@@ -103,11 +105,26 @@ function Shop() {
       onSuccess: () => { setSent(true); form.reset(); setFileName(''); }, onError: er => setFormError(errMessage(er))
     });
   };
+  const productShelf = <section id="shop" className="mx-auto max-w-[1440px] px-5 py-20 lg:px-10 lg:py-28">
+    <div className="mb-10 flex flex-col justify-between gap-7 border-b border-white/10 pb-8 md:flex-row md:items-end">
+      <div><span className="font-mono text-[10px] uppercase tracking-[.23em] text-[#ee6a33]">01 / The parts shelf</span><h2 className="mt-3 font-display text-5xl font-bold uppercase leading-none text-[#f0ece3] sm:text-6xl">Built to be used.</h2><p className="mt-3 max-w-md text-sm text-[#999b99]">Useful upgrades, made with care and shipped from our workshop.</p></div>
+      <label className="flex h-11 items-center gap-3 border-b border-white/20 px-1 text-[#999b99] focus-within:border-[#ed6228]"><Search size={15}/><input aria-label="Search products" data-testid="input-product-search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Find a part" className="w-44 bg-transparent text-sm text-[#eee9df] outline-none placeholder:text-[#696b6b]"/></label>
+    </div>
+    <div className="mb-8 flex gap-2 overflow-x-auto pb-2">
+      {categories.map(c => <button key={c.id} onClick={() => setFilter(c.id)} data-testid={`filter-category-${c.id}`} className={`shrink-0 border px-4 py-3 text-left transition ${filter === c.id ? 'border-[#ed6228] bg-[#ed6228] text-[#191a1b]' : 'border-white/10 text-[#aaa9a2] hover:border-white/35'}`}><span className="mr-3 font-mono text-[9px] opacity-70">{c.code}</span><span className="text-[10px] font-semibold uppercase tracking-[.11em]">{c.label}</span></button>)}
+    </div>
+    {isLoading ? <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">{[1,2,3].map(i => <div key={i} className="h-[390px] animate-pulse bg-white/[.045]"><div className="h-[250px] bg-white/[.04]"/></div>)}</div> :
+      isError ? <div className="border border-[#702f21] bg-[#351c18] p-8 text-center"><CircleAlert className="mx-auto text-[#ef7040]"/><p className="mt-3 text-sm text-[#ddd1c9]">{errMessage(error)}</p><button onClick={() => refetch()} className="mt-4 text-xs font-bold uppercase tracking-widest text-[#ef7040]">Try again</button></div> :
+      visibleProducts.length ? <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {visibleProducts.map((p, i) => <ProductCard key={p.id} product={p} index={i} onAdd={() => add(p.id)}/>)}
+      </div> : <div className="border border-dashed border-white/15 py-16 text-center"><Package className="mx-auto text-[#777]"/><p className="mt-3 font-display text-2xl uppercase text-[#ccc5b8]">No parts in this lane yet.</p><p className="mt-1 text-sm text-[#8a8b87]">Try a different category or search term.</p></div>}
+    <div className="mt-8 flex items-center gap-3 font-mono text-[9px] uppercase tracking-[.14em] text-[#777b79]"><span className="h-1.5 w-1.5 bg-[#ed6228]"/> Small batch stock rotates as we make it</div>
+  </section>;
   const heroTitle = content?.heroTitle || 'Parts for the ones who notice.';
   const heroSubtitle = content?.heroSubtitle || 'Small-batch hardware. Thoughtful fitment. Built in a real enthusiast’s workshop.';
   return <div className="grain min-h-[100dvh]">
     <Header count={quantity} onCart={() => setCartOpen(true)}/>
-    <main>
+    <main className={content ? 'hidden' : undefined}>
       <section className="relative isolate min-h-[640px] overflow-hidden border-b border-white/10 sm:min-h-[700px]">
         <img src={content?.heroImageUrl || heroAsset} alt="Precision automotive parts on a workshop bench" className="absolute inset-0 -z-20 h-full w-full object-cover object-center"/>
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#111315] via-[#111315]/85 to-[#111315]/20"/>
@@ -128,7 +145,7 @@ function Shop() {
         </div>
         <div className="absolute bottom-10 right-6 hidden font-mono text-[9px] uppercase tracking-[.2em] text-white/50 [writing-mode:vertical-rl] md:block">Redline Works · Est. in the garage</div>
       </section>
-      <section id="shop" className="mx-auto max-w-[1440px] px-5 py-20 lg:px-10 lg:py-28">
+       <section id={content ? 'shop-fallback' : 'shop'} className="mx-auto max-w-[1440px] px-5 py-20 lg:px-10 lg:py-28">
         <div className="mb-10 flex flex-col justify-between gap-7 border-b border-white/10 pb-8 md:flex-row md:items-end">
           <div><span className="font-mono text-[10px] uppercase tracking-[.23em] text-[#ee6a33]">01 / The parts shelf</span><h2 className="mt-3 font-display text-5xl font-bold uppercase leading-none text-[#f0ece3] sm:text-6xl">Built to be used.</h2><p className="mt-3 max-w-md text-sm text-[#999b99]">Useful upgrades, made with care and shipped from our workshop.</p></div>
           <label className="flex h-11 items-center gap-3 border-b border-white/20 px-1 text-[#999b99] focus-within:border-[#ed6228]"><Search size={15}/><input aria-label="Search products" data-testid="input-product-search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Find a part" className="w-44 bg-transparent text-sm text-[#eee9df] outline-none placeholder:text-[#696b6b]"/></label>
@@ -185,10 +202,12 @@ function Shop() {
         </div>
       </section>
     </main>
+    {content && <main><HomepageSections sections={content.sections} afterHero={productShelf}/></main>}
     <footer className="border-t border-white/10 bg-[#111315]">
-      <div className="mx-auto grid max-w-[1440px] gap-10 px-5 py-10 md:grid-cols-[1.3fr_1fr_1fr] lg:px-10">
+      <div className="mx-auto grid max-w-[1440px] gap-10 px-5 py-10 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr] lg:px-10">
         <div><div className="font-display text-2xl font-bold tracking-[.1em]">REDLINE<span className="text-[#ed6228]">/</span>WORKS</div><p className="mt-3 max-w-xs text-xs leading-5 text-[#81837f]">Independent automotive parts. Made slowly, tested properly, sent with care.</p></div>
-        <div className="flex flex-col gap-3 font-mono text-[9px] uppercase tracking-[.15em] text-[#999b99]"><span className="mb-1 text-[#e8e1d6]">Navigate</span><a href="#shop" className="hover:text-[#ed7441]">Parts shelf</a><a href="#custom" className="hover:text-[#ed7441]">Custom printing</a><a href="#story" className="hover:text-[#ed7441]">The workshop</a></div>
+        <div className="flex flex-col gap-3 font-mono text-[9px] uppercase tracking-[.15em] text-[#999b99]"><span className="mb-1 text-[#e8e1d6]">Navigate</span><a href="#shop" className="hover:text-[#ed7441]">Parts shelf</a><a href="#block-custom-print-request" className="hover:text-[#ed7441]">Custom printing</a><a href="#block-story-workshop" className="hover:text-[#ed7441]">The workshop</a></div>
+        <div className="flex flex-col gap-3 font-mono text-[9px] uppercase tracking-[.15em] text-[#999b99]"><span className="mb-1 text-[#e8e1d6]">Contact</span><a className="break-all hover:text-[#ed7441]" href={`mailto:${content?.contactEmail || 'hello@forgeauto.hu'}`}>{content?.contactEmail || 'hello@forgeauto.hu'}</a><a className="hover:text-[#ed7441]" href={`tel:${content?.contactPhone || '+36 30 555 0100'}`}>{content?.contactPhone || '+36 30 555 0100'}</a></div>
         <div className="flex flex-col gap-3 font-mono text-[9px] uppercase tracking-[.15em] text-[#999b99]"><span className="mb-1 text-[#e8e1d6]">Find us</span>{content?.instagramUrl && <a href={content.instagramUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-[#ed7441]"><Instagram size={14}/>Instagram</a>}{content?.facebookUrl && <a href={content.facebookUrl} target="_blank" rel="noreferrer" className="hover:text-[#ed7441]">Facebook</a>}<span>© {new Date().getFullYear()} Redline Works</span></div>
       </div>
     </footer>
@@ -264,7 +283,7 @@ function Admin() {
         {tab === 'orders' && <OrdersView orders={orders.data ?? []} loading={orders.isLoading} error={orders.isError ? errMessage(orders.error) : ''} retry={() => orders.refetch()} busy={updateOrder.isPending} onStatus={(id,status) => updateOrder.mutate({ id, data: { status } }, { onSuccess: () => { qc.invalidateQueries({ queryKey: getListAdminOrdersQueryKey() }); qc.invalidateQueries({ queryKey: getGetAdminDashboardQueryKey() }); setFeedback(`Order #${id} marked ${status}.`); }, onError: e => setFeedback(errMessage(e)) })}/>}
         {tab === 'inbox' && <InboxView messages={messages.data ?? []} loading={messages.isLoading} error={messages.isError ? errMessage(messages.error) : ''} retry={() => messages.refetch()}/>}
         {tab === 'products' && <ProductsView products={products.data ?? []} loading={products.isLoading} error={products.isError ? errMessage(products.error) : ''} retry={() => products.refetch()} createPending={createProduct.isPending} editPending={editProduct.isPending} deletePending={deleteProduct.isPending} onSave={(id,data) => id ? editProduct.mutate({ id, data }, { onSuccess: () => { refreshProducts(); setFeedback('Product changes saved.'); }, onError: e => setFeedback(errMessage(e)) }) : createProduct.mutate({ data: data as ProductInput }, { onSuccess: () => { refreshProducts(); setFeedback('Product added to the shelf.'); }, onError: e => setFeedback(errMessage(e)) })} onDelete={id => { if (window.confirm('Delete this product permanently?')) deleteProduct.mutate({ id }, { onSuccess: () => { refreshProducts(); setFeedback('Product removed.'); }, onError: e => setFeedback(errMessage(e)) }); }}/>}
-        {tab === 'content' && <ContentView content={siteContent.data ?? null} loading={siteContent.isLoading} onSave={data => updateContent.mutate({ data }, { onSuccess: updated => { qc.setQueryData(getGetSiteContentQueryKey(), updated); setFeedback('Storefront content updated.'); }, onError: e => setFeedback(errMessage(e)) })} pending={updateContent.isPending}/>}
+        {tab === 'content' && <AdminSiteContentBuilder content={siteContent.data ?? null} loading={siteContent.isLoading} error={siteContent.isError ? errMessage(siteContent.error) : ''} retry={() => siteContent.refetch()} onSave={data => updateContent.mutate({ data }, { onSuccess: updated => { qc.setQueryData(getGetSiteContentQueryKey(), updated); setFeedback('Storefront content updated.'); }, onError: e => setFeedback(errMessage(e)) })} pending={updateContent.isPending}/>}
       </main>
     </div>
   </div>;
@@ -301,33 +320,6 @@ function Field({ label, name, type = 'text', required = false, minLength, defaul
   return <label className="block"><span className="mb-2 block font-mono text-[9px] uppercase tracking-[.16em] text-[#929491]">{label}</span><input name={name} type={type} required={required} minLength={minLength} defaultValue={defaultValue} className="h-11 w-full border border-white/10 bg-[#121416] px-3 text-sm text-[#ece8df] outline-none transition focus:border-[#ed6228]"/></label>;
 }
 
-function ContentView({ content, loading, pending, onSave }: { content: SiteContent | null; loading: boolean; pending: boolean; onSave: (data: SiteContent) => void }) {
-  const [error, setError] = useState('');
-  if (loading) return <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-14 animate-pulse bg-white/[.05]"/> )}</div>;
-  const submit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); setError('');
-    const f = new FormData(e.currentTarget);
-    const data = Object.fromEntries(['heroTitle','heroSubtitle','heroImageUrl','aboutTitle','aboutBody','contactEmail','contactPhone','instagramUrl','facebookUrl'].map(k => [k, String(f.get(k) ?? '').trim()])) as unknown as SiteContent;
-    if (!data.heroTitle || !data.aboutTitle || !data.aboutBody || !data.contactEmail) { setError('Hero title, about title, about text, and contact email are required.'); return; }
-    onSave(data);
-  };
-  return <form onSubmit={submit} className="border border-white/10 bg-[#191b1d] p-5 sm:p-8">
-    <div className="mb-6 border-b border-white/10 pb-5"><span className="font-mono text-[8px] uppercase tracking-[.18em] text-[#ed7441]">Storefront CMS</span><h2 className="mt-2 font-display text-3xl uppercase">Words from the workshop.</h2><p className="mt-1 text-xs text-[#858783]">These edits appear on the public storefront. Save publishes them immediately.</p></div>
-    <div className="grid gap-5 sm:grid-cols-2">
-      <Field label="Hero title" name="heroTitle" required defaultValue={content?.heroTitle || ''}/>
-      <Field label="Hero subtitle" name="heroSubtitle" required defaultValue={content?.heroSubtitle || ''}/>
-      <Field label="Hero image URL" name="heroImageUrl" defaultValue={content?.heroImageUrl || ''}/>
-      <Field label="About title" name="aboutTitle" required defaultValue={content?.aboutTitle || ''}/>
-      <label className="block sm:col-span-2"><span className="mb-2 block font-mono text-[9px] uppercase tracking-[.16em] text-[#929491]">About body</span><textarea name="aboutBody" required defaultValue={content?.aboutBody || ''} rows={5} className="w-full border border-white/10 bg-[#121416] px-3 py-3 text-sm leading-6 text-[#ece8df] outline-none focus:border-[#ed6228]"/></label>
-      <Field label="Contact email" name="contactEmail" type="email" required defaultValue={content?.contactEmail || ''}/>
-      <Field label="Contact phone" name="contactPhone" defaultValue={content?.contactPhone || ''}/>
-      <Field label="Instagram URL" name="instagramUrl" defaultValue={content?.instagramUrl || ''}/>
-      <Field label="Facebook URL" name="facebookUrl" defaultValue={content?.facebookUrl || ''}/>
-    </div>
-    {error && <p role="alert" className="mt-4 text-xs text-[#ff8b65]">{error}</p>}
-    <button disabled={pending} className="mt-6 flex h-11 w-full items-center justify-between bg-[#ed6228] px-4 text-[9px] font-bold uppercase tracking-[.17em] text-[#171819] disabled:opacity-50 sm:w-64"><span>{pending ? 'Publishing…' : 'Publish site content'}</span><ArrowRight size={15}/></button>
-  </form>;
-}
 function Status({ status }: { status: string }) {
   const colors: Record<string, string> = { pending: 'border-[#c58d54]/40 bg-[#c58d54]/10 text-[#e5b982]', shipped: 'border-[#719b7b]/40 bg-[#719b7b]/10 text-[#a4c9ab]', cancelled: 'border-[#bc6654]/40 bg-[#bc6654]/10 text-[#df9583]' };
   return <span className={`mt-1 inline-flex border px-2 py-1 font-mono text-[8px] uppercase tracking-[.13em] ${colors[status] || 'border-white/10 text-[#aaa]'}`}>{status}</span>;

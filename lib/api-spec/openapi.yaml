@@ -508,6 +508,85 @@ components:
           type: string
           format: date-time
       required: [id, kind, name, email, details, fileName, createdAt]
+    HomePageTextBox:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+        title:
+          type: string
+          maxLength: 200
+        bodyText:
+          type: string
+          maxLength: 5000
+      required: [id, title, bodyText]
+    HomePageFeatureItem:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+        title:
+          type: string
+          maxLength: 200
+        bodyText:
+          type: string
+          maxLength: 2000
+      required: [id, title, bodyText]
+    HomePageSectionContent:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        subtitle:
+          type: string
+          maxLength: 500
+        bodyText:
+          type: string
+          maxLength: 10000
+        imageUrl:
+          type: string
+          maxLength: 2048
+        buttonText:
+          type: string
+          maxLength: 100
+        buttonUrl:
+          type: string
+          maxLength: 2048
+        formKind:
+          type: string
+          enum: [contact, print_request]
+        textBoxes:
+          type: array
+          maxItems: 12
+          items:
+            $ref: "#/components/schemas/HomePageTextBox"
+        featureItems:
+          type: array
+          maxItems: 12
+          items:
+            $ref: "#/components/schemas/HomePageFeatureItem"
+      required: [title, subtitle, bodyText, imageUrl, buttonText, buttonUrl, formKind, textBoxes, featureItems]
+    HomePageSection:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+        type:
+          type: string
+          enum: [hero, banner, text_image, features, custom_form]
+        order:
+          type: integer
+          minimum: 0
+        layout:
+          type: string
+          enum: [image_left, image_right, centered]
+        content:
+          $ref: "#/components/schemas/HomePageSectionContent"
+      required: [id, type, order, layout, content]
     SiteContent:
       type: object
       properties:
@@ -529,7 +608,12 @@ components:
           type: string
         facebookUrl:
           type: string
-      required: [heroTitle, heroSubtitle, heroImageUrl, aboutTitle, aboutBody, contactEmail, contactPhone, instagramUrl, facebookUrl]
+        sections:
+          type: array
+          maxItems: 25
+          items:
+            $ref: "#/components/schemas/HomePageSection"
+      required: [heroTitle, heroSubtitle, heroImageUrl, aboutTitle, aboutBody, contactEmail, contactPhone, instagramUrl, facebookUrl, sections]
     SiteContentInput:
       type: object
       properties:
@@ -552,7 +636,12 @@ components:
           type: string
         facebookUrl:
           type: string
-      required: [heroTitle, heroSubtitle, heroImageUrl, aboutTitle, aboutBody, contactEmail, contactPhone, instagramUrl, facebookUrl]
+        sections:
+          type: array
+          maxItems: 25
+          items:
+            $ref: "#/components/schemas/HomePageSection"
+      required: [heroTitle, heroSubtitle, heroImageUrl, aboutTitle, aboutBody, contactEmail, contactPhone, instagramUrl, facebookUrl, sections]
     AdminLoginInput:
       type: object
       properties:
