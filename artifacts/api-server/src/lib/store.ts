@@ -25,13 +25,47 @@ type SeedSectionContent = {
   textBoxes: SeedTextBox[];
   featureItems: SeedFeature[];
 };
+type SeedSectionStyle = {
+  align: "left" | "center" | "right";
+  columns: "one" | "two" | "asymmetric";
+  imagePosition: "left" | "right" | "top" | "background";
+  padding: "compact" | "normal" | "large" | "full";
+  bgStyle: "slate" | "black" | "outline" | "carbon";
+  textColor: "light" | "accent" | "muted";
+  accentMode: "brand" | "custom";
+  accentColor: string;
+};
 type SeedSection = {
   id: string;
   type: "hero" | "banner" | "text_image" | "features" | "custom_form";
   order: number;
   layout: "image_left" | "image_right" | "centered";
   content: SeedSectionContent;
+  style: SeedSectionStyle;
 };
+
+function defaultSectionStyle(
+  type: SeedSection["type"],
+  layout: SeedSection["layout"],
+): SeedSectionStyle {
+  return {
+    align: layout === "centered" ? "center" : "left",
+    columns: type === "hero" || type === "banner" ? "one" : "two",
+    imagePosition:
+      type === "hero"
+        ? "background"
+        : layout === "centered"
+          ? "top"
+          : layout === "image_left"
+            ? "left"
+            : "right",
+    padding: type === "hero" ? "full" : type === "banner" ? "normal" : "large",
+    bgStyle: type === "banner" ? "carbon" : "slate",
+    textColor: "light",
+    accentMode: "brand",
+    accentColor: "#ed6228",
+  };
+}
 
 function defaultHomepageSections(siteContent: SqlRow): SeedSection[] {
   const makeContent = (
@@ -49,7 +83,7 @@ function defaultHomepageSections(siteContent: SqlRow): SeedSection[] {
     ...values,
   });
 
-  return [
+  const sections: Omit<SeedSection, "style">[] = [
     {
       id: "hero-main",
       type: "hero",
@@ -144,6 +178,30 @@ function defaultHomepageSections(siteContent: SqlRow): SeedSection[] {
       }),
     },
   ];
+  return sections.map((section) => ({
+    ...section,
+    style: defaultSectionStyle(section.type, section.layout),
+  }));
+}
+
+function migrateHomepageSectionStyles(sectionsJson: string): string {
+  const parsed: unknown = JSON.parse(sectionsJson);
+  if (!Array.isArray(parsed)) return sectionsJson;
+
+  const normalized = parsed.map((value) => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+    const section = value as Record<string, unknown>;
+    const type = section.type as SeedSection["type"];
+    const layout = section.layout as SeedSection["layout"];
+    const defaults = defaultSectionStyle(type, layout);
+    const existingStyle =
+      section.style && typeof section.style === "object" && !Array.isArray(section.style)
+        ? (section.style as Partial<SeedSectionStyle>)
+        : {};
+    return { ...section, style: { ...defaults, ...existingStyle } };
+  });
+
+  return JSON.stringify(normalized);
 }
 
 const moduleRequire = createRequire(import.meta.url);
@@ -350,6 +408,14 @@ export async function initializeDatabase(): Promise<void> {
         "UPDATE site_content SET sections_json = ?, sections_initialized = 1 WHERE id = 1",
       )
       .run(JSON.stringify(defaultHomepageSections(existingSiteContent)));
+  } else {
+    const existingSectionsJson = String(existingSiteContent.sections_json ?? "[]");
+    const migratedSectionsJson = migrateHomepageSectionStyles(existingSectionsJson);
+    if (migratedSectionsJson !== existingSectionsJson) {
+      store
+        .prepare("UPDATE site_content SET sections_json = ? WHERE id = 1")
+        .run(migratedSectionsJson);
+    }
   }
 
   const configuredAdminUsername = process.env.ADMIN_USERNAME?.trim() || "admin";

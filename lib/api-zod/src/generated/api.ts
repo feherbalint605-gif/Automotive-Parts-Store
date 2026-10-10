@@ -138,6 +138,7 @@ export const getSiteContentResponseSectionsItemContentFeatureItemsItemBodyTextMa
 
 export const getSiteContentResponseSectionsItemContentFeatureItemsMax = 12;
 
+export const getSiteContentResponseSectionsItemStyleAccentColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
 export const getSiteContentResponseSectionsMax = 25;
 
 
@@ -175,6 +176,16 @@ export const GetSiteContentResponse = zod.object({
   "title": zod.string().max(getSiteContentResponseSectionsItemContentFeatureItemsItemTitleMax),
   "bodyText": zod.string().max(getSiteContentResponseSectionsItemContentFeatureItemsItemBodyTextMax)
 })).max(getSiteContentResponseSectionsItemContentFeatureItemsMax)
+}),
+  "style": zod.object({
+  "align": zod.enum(['left', 'center', 'right']),
+  "columns": zod.enum(['one', 'two', 'asymmetric']),
+  "imagePosition": zod.enum(['left', 'right', 'top', 'background']),
+  "padding": zod.enum(['compact', 'normal', 'large', 'full']),
+  "bgStyle": zod.enum(['slate', 'black', 'outline', 'carbon']),
+  "textColor": zod.enum(['light', 'accent', 'muted']),
+  "accentMode": zod.enum(['brand', 'custom']),
+  "accentColor": zod.string().regex(getSiteContentResponseSectionsItemStyleAccentColorRegExp)
 })
 })).max(getSiteContentResponseSectionsMax)
 })
@@ -323,6 +334,7 @@ export const updateSiteContentBodySectionsItemContentFeatureItemsItemBodyTextMax
 
 export const updateSiteContentBodySectionsItemContentFeatureItemsMax = 12;
 
+export const updateSiteContentBodySectionsItemStyleAccentColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
 export const updateSiteContentBodySectionsMax = 25;
 
 
@@ -360,6 +372,16 @@ export const UpdateSiteContentBody = zod.object({
   "title": zod.string().max(updateSiteContentBodySectionsItemContentFeatureItemsItemTitleMax),
   "bodyText": zod.string().max(updateSiteContentBodySectionsItemContentFeatureItemsItemBodyTextMax)
 })).max(updateSiteContentBodySectionsItemContentFeatureItemsMax)
+}),
+  "style": zod.object({
+  "align": zod.enum(['left', 'center', 'right']),
+  "columns": zod.enum(['one', 'two', 'asymmetric']),
+  "imagePosition": zod.enum(['left', 'right', 'top', 'background']),
+  "padding": zod.enum(['compact', 'normal', 'large', 'full']),
+  "bgStyle": zod.enum(['slate', 'black', 'outline', 'carbon']),
+  "textColor": zod.enum(['light', 'accent', 'muted']),
+  "accentMode": zod.enum(['brand', 'custom']),
+  "accentColor": zod.string().regex(updateSiteContentBodySectionsItemStyleAccentColorRegExp)
 })
 })).max(updateSiteContentBodySectionsMax)
 })
@@ -393,6 +415,7 @@ export const updateSiteContentResponseSectionsItemContentFeatureItemsItemBodyTex
 
 export const updateSiteContentResponseSectionsItemContentFeatureItemsMax = 12;
 
+export const updateSiteContentResponseSectionsItemStyleAccentColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
 export const updateSiteContentResponseSectionsMax = 25;
 
 
@@ -430,6 +453,16 @@ export const UpdateSiteContentResponse = zod.object({
   "title": zod.string().max(updateSiteContentResponseSectionsItemContentFeatureItemsItemTitleMax),
   "bodyText": zod.string().max(updateSiteContentResponseSectionsItemContentFeatureItemsItemBodyTextMax)
 })).max(updateSiteContentResponseSectionsItemContentFeatureItemsMax)
+}),
+  "style": zod.object({
+  "align": zod.enum(['left', 'center', 'right']),
+  "columns": zod.enum(['one', 'two', 'asymmetric']),
+  "imagePosition": zod.enum(['left', 'right', 'top', 'background']),
+  "padding": zod.enum(['compact', 'normal', 'large', 'full']),
+  "bgStyle": zod.enum(['slate', 'black', 'outline', 'carbon']),
+  "textColor": zod.enum(['light', 'accent', 'muted']),
+  "accentMode": zod.enum(['brand', 'custom']),
+  "accentColor": zod.string().regex(updateSiteContentResponseSectionsItemStyleAccentColorRegExp)
 })
 })).max(updateSiteContentResponseSectionsMax)
 })
