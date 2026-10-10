@@ -5,20 +5,6 @@ import {
   type HomePageSection,
   type HomePageTextBox,
 } from "@workspace/api-client-react";
-import {
-  contentAlignmentClasses,
-  featureGridClasses,
-  heroHeightClasses,
-  imageColumnsClasses,
-  sectionAccentBackground,
-  sectionAccentBorder,
-  sectionAccentColor,
-  sectionCopyColor,
-  sectionHeadingColor,
-  sectionSpacingClasses,
-  sectionStyleVariables,
-  sectionSurfaceClasses,
-} from "./homepage-section-style";
 
 const heroFallback = "/workshop-hero.png";
 const messageError = (error: unknown) =>
@@ -54,182 +40,140 @@ export function HomepageSections({
 
 function HomepageSectionView({ section }: { section: HomePageSection }) {
   const { content } = section;
-  const { style } = section;
   const anchor = `block-${section.id}`;
-  const surface = sectionSurfaceClasses(style);
-  const spacing = sectionSpacingClasses(style);
-  const alignment = contentAlignmentClasses(style);
-  const vars = sectionStyleVariables(style);
 
   if (section.type === "hero") {
-    const image = (
-      <SectionImage
-        src={content.imageUrl}
-        alt={content.title}
-        className="max-h-[520px] min-h-64 w-full object-cover"
-      />
-    );
-    const copy = (
-      <div className={`flex w-full max-w-[720px] flex-col ${alignment}`}>
-        {content.subtitle && (
-          <div className={`mb-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[.22em] ${sectionAccentColor}`}>
-            {style.align !== "right" && <span className={`h-px w-10 ${sectionAccentBackground}`} />}
-            {content.subtitle}
-            {style.align === "right" && <span className={`h-px w-10 ${sectionAccentBackground}`} />}
-          </div>
-        )}
-        <h1 className={`font-display text-[clamp(4rem,10vw,8.8rem)] font-bold uppercase leading-[.81] tracking-[-.035em] ${sectionHeadingColor}`}>
-          {content.title}
-        </h1>
-        {content.bodyText && (
-          <p className={`mt-8 max-w-[500px] whitespace-pre-line text-sm leading-7 sm:text-base ${sectionCopyColor}`}>
-            {content.bodyText}
-          </p>
-        )}
-        {content.buttonText && (
-          <a
-            href={content.buttonUrl || "#shop"}
-            className={`group mt-9 inline-flex h-12 items-center gap-7 ${sectionAccentBackground} px-5 text-[11px] font-bold uppercase tracking-[.16em] text-[#171819] transition hover:brightness-110`}
-          >
-            {content.buttonText}
-            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-          </a>
-        )}
-        {content.textBoxes.length > 0 && <TextBoxList boxes={content.textBoxes} />}
-      </div>
-    );
-    const imagePosition = style.imagePosition;
-
     return (
       <section
         id={anchor}
-        style={vars}
-        className={`relative isolate overflow-hidden border-b border-white/10 ${surface} ${
-          imagePosition === "background"
-            ? heroHeightClasses(style)
-            : spacing
-        }`}
+        className="relative isolate min-h-[640px] overflow-hidden border-b border-white/10 sm:min-h-[700px]"
       >
-        {imagePosition === "background" && (
-          <>
-            <SectionImage
-              src={content.imageUrl || heroFallback}
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#111315]/95 via-[#111315]/75 to-[#111315]/25" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#111315]/80 via-transparent to-[#111315]/25" />
-          </>
-        )}
-        <div className={`relative z-10 mx-auto flex w-full max-w-[1440px] flex-col px-6 lg:px-14 ${imagePosition === "background" ? "min-h-[inherit] justify-center py-20 md:py-24" : ""}`}>
-          {imagePosition === "background" ? (
-            <div className={`flex w-full ${alignment}`}>
-              {copy}
-            </div>
-          ) : imagePosition === "top" ? (
-            <>
-              {image}
-              {copy}
-            </>
-          ) : (
-            <div className={imageColumnsClasses(style, imagePosition === "left")}>
-              {imagePosition === "left" && image}
-              {copy}
-              {imagePosition === "right" && image}
-            </div>
-          )}
+        <img
+          src={content.imageUrl || heroFallback}
+          alt=""
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#111315] via-[#111315]/85 to-[#111315]/20" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#111315] via-transparent to-[#111315]/35" />
+        <div
+          className={`mx-auto flex min-h-[640px] max-w-[1440px] items-center px-6 py-20 sm:min-h-[700px] lg:px-14 ${
+            section.layout === "centered"
+              ? "justify-center text-center"
+              : section.layout === "image_left"
+                ? "justify-start text-left"
+                : "justify-end text-right"
+          }`}
+        >
+          <div className="max-w-[720px]">
+            {content.subtitle && (
+              <div className="mb-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[.22em] text-[#f17a48]">
+                <span className="h-px w-10 bg-[#ed6228]" />
+                {content.subtitle}
+              </div>
+            )}
+            <h1 className="font-display text-[clamp(4rem,10vw,8.8rem)] font-bold uppercase leading-[.81] tracking-[-.035em] text-[#f3eee4]">
+              {content.title}
+            </h1>
+            {content.bodyText && (
+              <p className="mt-8 max-w-[500px] text-sm leading-7 text-[#c3c0b8] sm:text-base">
+                {content.bodyText}
+              </p>
+            )}
+            {content.buttonText && (
+              <a
+                href={content.buttonUrl || "#shop"}
+                className="group mt-9 inline-flex h-12 items-center gap-7 bg-[#ed6228] px-5 text-[11px] font-bold uppercase tracking-[.16em] text-[#171819] transition hover:bg-[#ff7840]"
+              >
+                {content.buttonText}
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+              </a>
+            )}
+            {content.textBoxes.length > 0 && (
+              <TextBoxList boxes={content.textBoxes} />
+            )}
+          </div>
+        </div>
+        <div className="absolute bottom-10 right-6 hidden font-mono text-[9px] uppercase tracking-[.2em] text-white/50 [writing-mode:vertical-rl] md:block">
+          Redline Works · Est. in the garage
         </div>
       </section>
     );
   }
 
   if (section.type === "banner") {
-    const image = <SectionImage src={content.imageUrl} alt={content.title} className="max-h-80 w-full object-cover" />;
-    const copy = (
-      <div className={`flex flex-col ${alignment}`}>
-        {content.subtitle && (
-          <span className={`font-mono text-[9px] uppercase tracking-[.2em] ${sectionAccentColor}`}>
-            {content.subtitle}
-          </span>
-        )}
-        <h2 className={`mt-3 font-display text-4xl font-bold uppercase ${sectionHeadingColor}`}>
-          {content.title}
-        </h2>
-        {content.bodyText && (
-          <p className={`mt-3 max-w-2xl whitespace-pre-line text-sm leading-7 ${sectionCopyColor}`}>
-            {content.bodyText}
-          </p>
-        )}
-        {content.buttonText && (
-          <a
-            href={content.buttonUrl || "#shop"}
-            className={`mt-5 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.17em] ${sectionAccentColor} hover:brightness-125`}
-          >
-            {content.buttonText}
-            <ArrowRight size={15} />
-          </a>
-        )}
-        {content.textBoxes.length > 0 && <TextBoxList boxes={content.textBoxes} />}
-      </div>
-    );
-
     return (
-      <section id={anchor} style={vars} className={`${surface} ${spacing}`}>
-        <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-7 px-5 lg:px-10">
-          {style.imagePosition === "background" && content.imageUrl ? (
-            <div className="relative isolate overflow-hidden">
-              <SectionImage
-                src={content.imageUrl}
-                alt=""
-                className="absolute inset-0 z-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 z-0 bg-[#111315]/75" />
-              <div className={`relative z-10 p-6 sm:p-10 ${alignment}`}>{copy}</div>
-            </div>
-          ) : style.imagePosition === "top" ? (
-            <>
-              {image}
-              {copy}
-            </>
-          ) : content.imageUrl ? (
-            <div className={imageColumnsClasses(style, style.imagePosition === "left")}>
-              {style.imagePosition === "left" && image}
-              {copy}
-              {style.imagePosition === "right" && image}
-            </div>
-          ) : copy}
+      <section id={anchor} className="carbon border-y border-white/10">
+        <div
+          className={`mx-auto flex max-w-[1440px] flex-col gap-7 px-5 py-14 lg:px-10 lg:py-16 ${
+            section.layout === "centered"
+              ? "items-center text-center"
+              : section.layout === "image_left"
+                ? "items-start text-left"
+                : "items-end text-right"
+          }`}
+        >
+          {content.subtitle && (
+            <span className="font-mono text-[9px] uppercase tracking-[.2em] text-[#ed7441]">
+              {content.subtitle}
+            </span>
+          )}
+          <h2 className="font-display text-4xl font-bold uppercase text-[#eee9df]">
+            {content.title}
+          </h2>
+          {content.bodyText && (
+            <p className="max-w-2xl text-sm leading-7 text-[#aaa9a3]">
+              {content.bodyText}
+            </p>
+          )}
+          {content.imageUrl && (
+            <img
+              src={content.imageUrl}
+              alt=""
+              className="max-h-80 w-full max-w-4xl object-cover"
+            />
+          )}
+          {content.buttonText && (
+            <a
+              href={content.buttonUrl || "#shop"}
+              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.17em] text-[#ee7441] hover:text-[#ff9868]"
+            >
+              {content.buttonText}
+              <ArrowRight size={15} />
+            </a>
+          )}
+          {content.textBoxes.length > 0 && <TextBoxList boxes={content.textBoxes} />}
         </div>
       </section>
     );
   }
 
   if (section.type === "text_image") {
-    const image = (
-      <SectionImage
+    const image =
+      content.imageUrl &&
+      <img
         src={content.imageUrl}
         alt={content.title}
         className="max-h-[520px] min-h-64 w-full object-cover"
-      />
-    );
+      />;
     const copy = (
-      <div className={`flex flex-col ${alignment}`}>
+      <div className="flex flex-col justify-center">
         {content.subtitle && (
-          <span className={`font-mono text-[10px] uppercase tracking-[.22em] ${sectionAccentColor}`}>
+          <span className="font-mono text-[10px] uppercase tracking-[.22em] text-[#ee6a33]">
             {content.subtitle}
           </span>
         )}
-        <h2 className={`mt-4 max-w-xl font-display text-5xl font-bold uppercase leading-[.88] sm:text-7xl ${sectionHeadingColor}`}>
+        <h2 className="mt-4 max-w-xl font-display text-5xl font-bold uppercase leading-[.88] text-[#f1ece1] sm:text-7xl">
           {content.title}
         </h2>
         {content.bodyText && (
-          <p className={`mt-6 max-w-lg whitespace-pre-line text-sm leading-7 ${sectionCopyColor}`}>
+          <p className="mt-6 max-w-lg whitespace-pre-line text-sm leading-7 text-[#a8a8a2]">
             {content.bodyText}
           </p>
         )}
         {content.buttonText && (
           <a
             href={content.buttonUrl || "#shop"}
-            className={`mt-7 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.17em] ${sectionAccentColor} hover:brightness-125`}
+            className="mt-7 inline-flex items-center gap-2 self-start text-[10px] font-bold uppercase tracking-[.17em] text-[#ee7441] hover:text-[#ff9868]"
           >
             {content.buttonText}
             <ArrowRight size={15} />
@@ -240,104 +184,62 @@ function HomepageSectionView({ section }: { section: HomePageSection }) {
     );
 
     return (
-      <section id={anchor} style={vars} className={`${surface} ${spacing}`}>
-        <div className="mx-auto w-full max-w-[1440px] px-5 lg:px-10">
-          {style.imagePosition === "background" && content.imageUrl ? (
-            <div className="relative isolate overflow-hidden">
-              <SectionImage
-                src={content.imageUrl}
-                alt=""
-                className="absolute inset-0 z-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 z-0 bg-[#111315]/80" />
-              <div className={`relative z-10 p-6 sm:p-10 ${alignment}`}>{copy}</div>
-            </div>
-          ) : style.imagePosition === "top" ? (
-            <div className={`flex flex-col gap-8 ${style.align === "center" ? "items-center" : ""}`}>
-              {image}
-              {copy}
-            </div>
-          ) : content.imageUrl ? (
-            <div className={imageColumnsClasses(style, style.imagePosition === "left")}>
-              {style.imagePosition === "left" && image}
-              {copy}
-              {style.imagePosition === "right" && image}
-            </div>
-          ) : copy}
-        </div>
+      <section id={anchor} className="mx-auto max-w-[1440px] px-5 py-20 lg:px-10 lg:py-28">
+        {section.layout === "centered" ? (
+          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+            {copy}
+            {image}
+          </div>
+        ) : (
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+            {section.layout === "image_left" && image}
+            {copy}
+            {section.layout === "image_right" && image}
+          </div>
+        )}
       </section>
     );
   }
 
   if (section.type === "features") {
-    const image = <SectionImage src={content.imageUrl} alt={content.title} className="max-h-96 w-full object-cover" />;
-    const copyAndCards = (
-      <>
-        <div className={alignment}>
-          {content.subtitle && (
-            <span className={`font-mono text-[10px] uppercase tracking-[.2em] ${sectionAccentColor}`}>
-              {content.subtitle}
-            </span>
-          )}
-          <h2 className={`mt-4 font-display text-5xl font-bold uppercase leading-[.88] ${sectionHeadingColor}`}>
-            {content.title}
-          </h2>
-          {content.bodyText && (
-            <p className={`mt-5 whitespace-pre-line text-sm leading-7 ${sectionCopyColor}`}>
-              {content.bodyText}
-            </p>
-          )}
-        </div>
-        {content.featureItems.length > 0 && (
-          <div className={`mt-9 ${featureGridClasses(style)}`}>
-            {content.featureItems.map((item) => (
-              <article key={item.id} className="border border-white/10 bg-black/10 p-5">
-                <h3 className={`font-display text-2xl uppercase ${sectionHeadingColor}`}>{item.title}</h3>
-                {item.bodyText && (
-                  <p className={`mt-2 text-xs leading-6 ${sectionCopyColor}`}>{item.bodyText}</p>
-                )}
-              </article>
-            ))}
-          </div>
-        )}
-        {content.textBoxes.length > 0 && <TextBoxList boxes={content.textBoxes} />}
-        {content.buttonText && (
-          <a
-            href={content.buttonUrl || "#shop"}
-            className={`mt-8 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.17em] ${sectionAccentColor}`}
-          >
-            {content.buttonText}
-            <ArrowRight size={15} />
-          </a>
-        )}
-      </>
-    );
-
     return (
-      <section id={anchor} style={vars} className={`${surface} ${spacing}`}>
-        <div className="mx-auto w-full max-w-[1440px] px-5 lg:px-10">
-          {style.imagePosition === "background" && content.imageUrl ? (
-            <div className="relative isolate overflow-hidden">
-              <SectionImage
-                src={content.imageUrl}
-                alt=""
-                className="absolute inset-0 z-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 z-0 bg-[#111315]/80" />
-              <div className="relative z-10 p-6 sm:p-10">{copyAndCards}</div>
+      <section id={anchor} className="border-y border-white/10 bg-[#17191b]">
+        <div className="mx-auto max-w-[1440px] px-5 py-16 lg:px-10 lg:py-20">
+          <div className={section.layout === "centered" ? "text-center" : "max-w-3xl"}>
+            {content.subtitle && (
+              <span className="font-mono text-[10px] uppercase tracking-[.2em] text-[#ed6b35]">
+                {content.subtitle}
+              </span>
+            )}
+            <h2 className="mt-4 font-display text-5xl font-bold uppercase leading-[.88] text-[#eee9df]">
+              {content.title}
+            </h2>
+            {content.bodyText && (
+              <p className="mt-5 text-sm leading-7 text-[#aaa9a2]">{content.bodyText}</p>
+            )}
+          </div>
+          {content.featureItems.length > 0 && (
+            <div className="mt-9 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {content.featureItems.map((item) => (
+                <article key={item.id} className="border border-white/10 bg-[#191b1d] p-5">
+                  <h3 className="font-display text-2xl uppercase text-[#eee9df]">{item.title}</h3>
+                  {item.bodyText && (
+                    <p className="mt-2 text-xs leading-6 text-[#999b98]">{item.bodyText}</p>
+                  )}
+                </article>
+              ))}
             </div>
-          ) : style.imagePosition === "top" ? (
-            <div className="space-y-8">
-              {image}
-              {copyAndCards}
-            </div>
-          ) : content.imageUrl ? (
-            <div className={imageColumnsClasses(style, style.imagePosition === "left")}>
-              {style.imagePosition === "left" && image}
-              {copyAndCards}
-              {style.imagePosition === "right" && image}
-            </div>
-          ) : copyAndCards}
+          )}
+          {content.textBoxes.length > 0 && <TextBoxList boxes={content.textBoxes} />}
+          {content.buttonText && (
+            <a
+              href={content.buttonUrl || "#shop"}
+              className="mt-8 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.17em] text-[#ee7441]"
+            >
+              {content.buttonText}
+              <ArrowRight size={15} />
+            </a>
+          )}
         </div>
       </section>
     );
@@ -346,29 +248,16 @@ function HomepageSectionView({ section }: { section: HomePageSection }) {
   return <CustomFormSection section={section} anchor={anchor} />;
 }
 
-function SectionImage({
-  src,
-  alt,
-  className,
-}: {
-  src: string;
-  alt: string;
-  className: string;
-}) {
-  if (!src) return null;
-  return <img src={src} alt={alt} className={className} />;
-}
-
 function TextBoxList({ boxes }: { boxes: HomePageTextBox[] }) {
   return (
     <div className="mt-7 grid gap-3 sm:grid-cols-2">
       {boxes.map((box) => (
-        <article key={box.id} className={`border-l ${sectionAccentBorder} bg-white/[.03] px-4 py-3 text-left`}>
+        <article key={box.id} className="border-l border-[#ed6228] bg-white/[.03] px-4 py-3 text-left">
           {box.title && (
-            <h3 className={`font-display text-xl uppercase ${sectionHeadingColor}`}>{box.title}</h3>
+            <h3 className="font-display text-xl uppercase text-[#eee9df]">{box.title}</h3>
           )}
           {box.bodyText && (
-            <p className={`mt-1 whitespace-pre-line text-xs leading-6 ${sectionCopyColor}`}>
+            <p className="mt-1 whitespace-pre-line text-xs leading-6 text-[#a5a6a1]">
               {box.bodyText}
             </p>
           )}
@@ -386,21 +275,11 @@ function CustomFormSection({
   anchor: string;
 }) {
   const { content } = section;
-  const { style } = section;
   const createMessage = useCreateMessage();
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const [fileName, setFileName] = useState("");
   const isPrintRequest = content.formKind === "print_request";
-  const alignment = contentAlignmentClasses(style);
-  const vars = sectionStyleVariables(style);
-  const image = (
-    <SectionImage
-      src={content.imageUrl}
-      alt={content.title}
-      className="max-h-80 w-full object-cover"
-    />
-  );
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -428,43 +307,49 @@ function CustomFormSection({
     );
   };
 
-  const intro = (
-    <div className={`flex flex-col ${alignment}`}>
-      {style.imagePosition === "left" && image}
-      {content.subtitle && (
-        <span className={`font-mono text-[10px] uppercase tracking-[.22em] ${sectionAccentColor}`}>
-          {content.subtitle}
-        </span>
-      )}
-      <h2 className={`mt-4 font-display text-5xl font-bold uppercase leading-[.88] sm:text-6xl ${sectionHeadingColor}`}>
-        {content.title}
-      </h2>
-      {content.bodyText && (
-        <p className={`mt-6 whitespace-pre-line text-sm leading-7 ${sectionCopyColor}`}>
-          {content.bodyText}
-        </p>
-      )}
-      {style.imagePosition === "right" && image}
-      {content.textBoxes.length > 0 && <TextBoxList boxes={content.textBoxes} />}
-    </div>
-  );
-
-  const formPanel = (
-    <div className="border border-white/10 bg-[#191b1d]/95 p-6 sm:p-9">
+  return (
+    <section id={anchor} className="mx-auto max-w-[1440px] px-5 py-20 lg:px-10 lg:py-28">
+      <div
+        className={`grid gap-8 ${
+          section.layout === "centered"
+            ? "mx-auto max-w-3xl"
+            : "lg:grid-cols-[.9fr_1.1fr] lg:items-center"
+        }`}
+      >
+        <div className={section.layout === "centered" ? "text-center" : "flex flex-col justify-center"}>
+          {content.subtitle && (
+            <span className="font-mono text-[10px] uppercase tracking-[.22em] text-[#ee6a33]">
+              {content.subtitle}
+            </span>
+          )}
+          <h2 className="mt-4 font-display text-5xl font-bold uppercase leading-[.88] text-[#f1ece1] sm:text-6xl">
+            {content.title}
+          </h2>
+          {content.bodyText && (
+            <p className="mt-6 whitespace-pre-line text-sm leading-7 text-[#a8a8a2]">
+              {content.bodyText}
+            </p>
+          )}
+          {content.imageUrl && (
+            <img src={content.imageUrl} alt="" className="mt-6 max-h-80 w-full object-cover" />
+          )}
+          {content.textBoxes.length > 0 && <TextBoxList boxes={content.textBoxes} />}
+        </div>
+        <div className="border border-white/10 bg-[#191b1d] p-6 sm:p-9">
           {sent ? (
             <div className="flex min-h-[320px] flex-col items-start justify-center">
-              <span className={`grid h-11 w-11 place-items-center border ${sectionAccentBorder} ${sectionAccentColor}`}>
+              <span className="grid h-11 w-11 place-items-center border border-[#ed6228] text-[#ed6228]">
                 <Check size={20} />
               </span>
-              <h3 className={`mt-6 font-display text-4xl uppercase ${sectionHeadingColor}`}>
+              <h3 className="mt-6 font-display text-4xl uppercase text-[#eee9df]">
                 {isPrintRequest ? "On our bench." : "Message on its way."}
               </h3>
-              <p className={`mt-2 max-w-sm text-sm leading-6 ${sectionCopyColor}`}>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-[#999b99]">
                 Thanks for the note. We’ll read it and get back to you directly.
               </p>
               <button
                 onClick={() => setSent(false)}
-                className={`mt-7 text-[10px] font-bold uppercase tracking-widest ${sectionAccentColor}`}
+                className="mt-7 text-[10px] font-bold uppercase tracking-widest text-[#ed7441]"
               >
                 Send another
               </button>
@@ -472,13 +357,13 @@ function CustomFormSection({
           ) : (
             <form onSubmit={submit} className="space-y-5">
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <h3 className={`font-display text-3xl font-bold uppercase ${sectionHeadingColor}`}>
+                <h3 className="font-display text-3xl font-bold uppercase text-[#eee9df]">
                   {isPrintRequest ? "Custom print request" : "Send a message"}
                 </h3>
                 {isPrintRequest ? (
-                  <FileUp size={19} className={sectionAccentColor} />
+                  <FileUp size={19} className="text-[#ed6228]" />
                 ) : (
-                  <Send size={18} className={sectionAccentColor} />
+                  <Send size={18} className="text-[#ed6228]" />
                 )}
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -486,7 +371,7 @@ function CustomFormSection({
                 <MessageField label="Email address" name="email" type="email" required />
               </div>
               <label className="block">
-                  <span className="mb-2 block font-mono text-[9px] uppercase tracking-[.16em] text-[#929491]">
+                <span className="mb-2 block font-mono text-[9px] uppercase tracking-[.16em] text-[#929491]">
                   {isPrintRequest ? "What are we making?" : "Message"}
                 </span>
                 <textarea
@@ -499,12 +384,12 @@ function CustomFormSection({
                       ? "Tell us what it does, what it fits, and any dimensions you have."
                       : "What can we help with?"
                   }
-                  className="w-full resize-y border border-white/10 bg-[#121416] px-3 py-3 text-sm text-[#ece8df] outline-none focus:border-[color:var(--section-accent)]"
+                  className="w-full resize-y border border-white/10 bg-[#121416] px-3 py-3 text-sm text-[#ece8df] outline-none focus:border-[#ed6228]"
                 />
               </label>
               {isPrintRequest && (
-                <label className="flex cursor-pointer items-center gap-3 border border-dashed border-white/15 px-4 py-3 text-xs text-[#aaa9a2] transition hover:border-[color:var(--section-accent)]">
-                  <FileUp size={16} className={sectionAccentColor} />
+                <label className="flex cursor-pointer items-center gap-3 border border-dashed border-white/15 px-4 py-3 text-xs text-[#aaa9a2] transition hover:border-[#ed6228]">
+                  <FileUp size={16} className="text-[#ed7441]" />
                   <span>{fileName || "Attach an STL file name (optional)"}</span>
                   <input
                     type="file"
@@ -517,7 +402,7 @@ function CustomFormSection({
               {error && <p role="alert" className="text-xs text-[#ff8b65]">{error}</p>}
               <button
                 disabled={createMessage.isPending}
-                className={`flex h-12 w-full items-center justify-between ${sectionAccentBackground} px-4 text-[10px] font-bold uppercase tracking-[.17em] text-[#171819] transition hover:brightness-110 disabled:opacity-50`}
+                className="flex h-12 w-full items-center justify-between bg-[#ed6228] px-4 text-[10px] font-bold uppercase tracking-[.17em] text-[#171819] transition hover:bg-[#ff7840] disabled:opacity-50"
               >
                 <span>
                   {createMessage.isPending
@@ -529,30 +414,6 @@ function CustomFormSection({
               </button>
             </form>
           )}
-    </div>
-  );
-
-  return (
-    <section
-      id={anchor}
-      style={vars}
-      className={`relative isolate ${sectionSurfaceClasses(style)} ${sectionSpacingClasses(style)}`}
-    >
-      {style.imagePosition === "background" && content.imageUrl && (
-        <>
-          <SectionImage
-            src={content.imageUrl}
-            alt=""
-            className="absolute inset-0 z-0 h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 z-0 bg-[#111315]/80" />
-        </>
-      )}
-      <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-5 lg:px-10">
-        {style.imagePosition === "top" && image}
-        <div className={imageColumnsClasses(style, false)}>
-          {intro}
-          {formPanel}
         </div>
       </div>
     </section>

@@ -190,83 +190,6 @@ export interface HomePageSectionContent {
   featureItems: HomePageFeatureItem[];
 }
 
-export type HomePageSectionStyleAlign = typeof HomePageSectionStyleAlign[keyof typeof HomePageSectionStyleAlign];
-
-
-export const HomePageSectionStyleAlign = {
-  left: 'left',
-  center: 'center',
-  right: 'right',
-} as const;
-
-export type HomePageSectionStyleColumns = typeof HomePageSectionStyleColumns[keyof typeof HomePageSectionStyleColumns];
-
-
-export const HomePageSectionStyleColumns = {
-  one: 'one',
-  two: 'two',
-  asymmetric: 'asymmetric',
-} as const;
-
-export type HomePageSectionStyleImagePosition = typeof HomePageSectionStyleImagePosition[keyof typeof HomePageSectionStyleImagePosition];
-
-
-export const HomePageSectionStyleImagePosition = {
-  left: 'left',
-  right: 'right',
-  top: 'top',
-  background: 'background',
-} as const;
-
-export type HomePageSectionStylePadding = typeof HomePageSectionStylePadding[keyof typeof HomePageSectionStylePadding];
-
-
-export const HomePageSectionStylePadding = {
-  compact: 'compact',
-  normal: 'normal',
-  large: 'large',
-  full: 'full',
-} as const;
-
-export type HomePageSectionStyleBgStyle = typeof HomePageSectionStyleBgStyle[keyof typeof HomePageSectionStyleBgStyle];
-
-
-export const HomePageSectionStyleBgStyle = {
-  slate: 'slate',
-  black: 'black',
-  outline: 'outline',
-  carbon: 'carbon',
-} as const;
-
-export type HomePageSectionStyleTextColor = typeof HomePageSectionStyleTextColor[keyof typeof HomePageSectionStyleTextColor];
-
-
-export const HomePageSectionStyleTextColor = {
-  light: 'light',
-  accent: 'accent',
-  muted: 'muted',
-} as const;
-
-export type HomePageSectionStyleAccentMode = typeof HomePageSectionStyleAccentMode[keyof typeof HomePageSectionStyleAccentMode];
-
-
-export const HomePageSectionStyleAccentMode = {
-  brand: 'brand',
-  custom: 'custom',
-} as const;
-
-export interface HomePageSectionStyle {
-  align: HomePageSectionStyleAlign;
-  columns: HomePageSectionStyleColumns;
-  imagePosition: HomePageSectionStyleImagePosition;
-  padding: HomePageSectionStylePadding;
-  bgStyle: HomePageSectionStyleBgStyle;
-  textColor: HomePageSectionStyleTextColor;
-  accentMode: HomePageSectionStyleAccentMode;
-  /** @pattern ^#[0-9A-Fa-f]{6}$ */
-  accentColor: string;
-}
-
 export type HomePageSectionType = typeof HomePageSectionType[keyof typeof HomePageSectionType];
 
 
@@ -295,7 +218,6 @@ export interface HomePageSection {
   order: number;
   layout: HomePageSectionLayout;
   content: HomePageSectionContent;
-  style: HomePageSectionStyle;
 }
 
 export interface SiteContent {

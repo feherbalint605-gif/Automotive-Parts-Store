@@ -7,7 +7,6 @@
  */
 import type { HomePageSectionContent } from './homePageSectionContent';
 import type { HomePageSectionLayout } from './homePageSectionLayout';
-import type { HomePageSectionStyle } from './homePageSectionStyle';
 import type { HomePageSectionType } from './homePageSectionType';
 
 export interface HomePageSection {
@@ -18,5 +17,4 @@ export interface HomePageSection {
   order: number;
   layout: HomePageSectionLayout;
   content: HomePageSectionContent;
-  style: HomePageSectionStyle;
 }

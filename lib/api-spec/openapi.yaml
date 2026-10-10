@@ -569,34 +569,6 @@ components:
           items:
             $ref: "#/components/schemas/HomePageFeatureItem"
       required: [title, subtitle, bodyText, imageUrl, buttonText, buttonUrl, formKind, textBoxes, featureItems]
-    HomePageSectionStyle:
-      type: object
-      properties:
-        align:
-          type: string
-          enum: [left, center, right]
-        columns:
-          type: string
-          enum: [one, two, asymmetric]
-        imagePosition:
-          type: string
-          enum: [left, right, top, background]
-        padding:
-          type: string
-          enum: [compact, normal, large, full]
-        bgStyle:
-          type: string
-          enum: [slate, black, outline, carbon]
-        textColor:
-          type: string
-          enum: [light, accent, muted]
-        accentMode:
-          type: string
-          enum: [brand, custom]
-        accentColor:
-          type: string
-          pattern: "^#[0-9A-Fa-f]{6}$"
-      required: [align, columns, imagePosition, padding, bgStyle, textColor, accentMode, accentColor]
     HomePageSection:
       type: object
       properties:
@@ -614,9 +586,7 @@ components:
           enum: [image_left, image_right, centered]
         content:
           $ref: "#/components/schemas/HomePageSectionContent"
-        style:
-          $ref: "#/components/schemas/HomePageSectionStyle"
-      required: [id, type, order, layout, content, style]
+      required: [id, type, order, layout, content]
     SiteContent:
       type: object
       properties:

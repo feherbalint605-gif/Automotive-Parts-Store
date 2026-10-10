@@ -15,7 +15,6 @@ import type {
   HomePageFeatureItem,
   HomePageSection,
   HomePageSectionContent,
-  HomePageSectionStyle,
   HomePageSectionType,
   HomePageTextBox,
   SiteContent,
@@ -62,20 +61,6 @@ function createSection(type: HomePageSectionType, order: number): HomePageSectio
     order,
     layout: type === "text_image" ? "image_right" : "centered",
     content: { ...content, ...defaults[type] },
-    style: defaultSectionStyle(type),
-  };
-}
-
-function defaultSectionStyle(type: HomePageSectionType): HomePageSectionStyle {
-  return {
-    align: type === "hero" || type === "banner" || type === "features" ? "center" : "left",
-    columns: type === "hero" || type === "banner" ? "one" : "two",
-    imagePosition: type === "hero" ? "background" : type === "text_image" ? "right" : "top",
-    padding: type === "hero" ? "full" : type === "banner" ? "normal" : "large",
-    bgStyle: type === "banner" ? "carbon" : "slate",
-    textColor: "light",
-    accentMode: "brand",
-    accentColor: "#ed6228",
   };
 }
 
@@ -134,19 +119,6 @@ export function AdminSiteContentBuilder({
       current.map((section) =>
         section.id === id
           ? { ...section, content: { ...section.content, ...patch } }
-          : section,
-      ),
-    );
-  };
-
-  const updateSectionStyle = (
-    id: string,
-    patch: Partial<HomePageSectionStyle>,
-  ) => {
-    setSections((current) =>
-      current.map((section) =>
-        section.id === id
-          ? { ...section, style: { ...section.style, ...patch } }
           : section,
       ),
     );
@@ -333,7 +305,13 @@ export function AdminSiteContentBuilder({
             <SectionEditor
               section={selected}
               onChange={(patch) => updateSection(selected.id, patch)}
-              onStyleChange={(patch) => updateSectionStyle(selected.id, patch)}
+              onLayoutChange={(layout) =>
+                setSections((current) =>
+                  current.map((section) =>
+                    section.id === selected.id ? { ...section, layout } : section,
+                  ),
+                )
+              }
             />
           ) : (
             <div className="grid min-h-64 place-items-center text-center">
@@ -474,11 +452,11 @@ export function AdminSiteContentBuilder({
 function SectionEditor({
   section,
   onChange,
-  onStyleChange,
+  onLayoutChange,
 }: {
   section: HomePageSection;
   onChange: (patch: Partial<HomePageSectionContent>) => void;
-  onStyleChange: (patch: Partial<HomePageSectionStyle>) => void;
+  onLayoutChange: (layout: HomePageSection["layout"]) => void;
 }) {
   const { content } = section;
   const updateTextBox = (id: string, patch: Partial<HomePageTextBox>) =>
@@ -508,9 +486,22 @@ function SectionEditor({
             Link target: #{`block-${section.id}`}
           </p>
         </div>
-        <span className="border border-white/10 px-3 py-2 font-mono text-[8px] uppercase tracking-widest text-[#aaa]">
-          {section.style.align} · {section.style.columns} column layout
-        </span>
+        <label className="block w-44">
+          <span className="mb-2 block font-mono text-[8px] uppercase tracking-widest text-[#777]">
+            Layout
+          </span>
+          <select
+            value={section.layout}
+            onChange={(event) =>
+              onLayoutChange(event.target.value as HomePageSection["layout"])
+            }
+            className="h-9 w-full border border-white/10 bg-[#121416] px-2 text-xs text-[#ddd]"
+          >
+            <option value="image_left">Image left</option>
+            <option value="image_right">Image right</option>
+            <option value="centered">Centered</option>
+          </select>
+        </label>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -537,137 +528,19 @@ function SectionEditor({
         </label>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_180px]">
-        <SettingsField
-          label="Image URL (optional)"
-          value={content.imageUrl}
-          onChange={(imageUrl) => onChange({ imageUrl })}
-        />
-        <ImagePreview src={content.imageUrl} />
-      </div>
-
-      <details className="border border-white/10 bg-[#141617]">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-4">
-          <span>
-            <span className="block font-mono text-[9px] font-bold uppercase tracking-[.16em] text-[#eee9df]">
-              Design / Style Settings
-            </span>
-            <span className="mt-1 block text-[10px] text-[#777]">
-              Tune layout, spacing, colors, and image placement for this section.
-            </span>
-          </span>
-          <span className="font-mono text-[8px] uppercase tracking-widest text-[#ed7441]">
-            Open settings
-          </span>
-        </summary>
-        <div className="grid gap-x-5 gap-y-6 border-t border-white/10 p-4 sm:grid-cols-2 xl:grid-cols-3">
-          <StyleSelect
-            label="Content alignment"
-            value={section.style.align}
-            options={[
-              { value: "left", label: "Left" },
-              { value: "center", label: "Center" },
-              { value: "right", label: "Right" },
-            ]}
-            onChange={(align) => onStyleChange({ align: align as HomePageSectionStyle["align"] })}
+      {(section.type === "hero" ||
+        section.type === "banner" ||
+        section.type === "text_image" ||
+        section.type === "custom_form") && (
+        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_180px]">
+          <SettingsField
+            label="Image URL"
+            value={content.imageUrl}
+            onChange={(imageUrl) => onChange({ imageUrl })}
           />
-          <StyleSelect
-            label="Grid / columns"
-            value={section.style.columns}
-            options={[
-              { value: "one", label: "1 column" },
-              { value: "two", label: "2 equal columns" },
-              { value: "asymmetric", label: "70 / 30 split" },
-            ]}
-            onChange={(columns) =>
-              onStyleChange({ columns: columns as HomePageSectionStyle["columns"] })
-            }
-          />
-          <StyleSelect
-            label="Image position"
-            value={section.style.imagePosition}
-            options={[
-              { value: "left", label: "Image left" },
-              { value: "right", label: "Image right" },
-              { value: "top", label: "Image top" },
-              { value: "background", label: "Background / overlay" },
-            ]}
-            onChange={(imagePosition) =>
-              onStyleChange({
-                imagePosition: imagePosition as HomePageSectionStyle["imagePosition"],
-              })
-            }
-          />
-          <StyleSelect
-            label="Section spacing / height"
-            value={section.style.padding}
-            options={[
-              { value: "compact", label: "Compact" },
-              { value: "normal", label: "Normal" },
-              { value: "large", label: "Large" },
-              { value: "full", label: "Full-height screen" },
-            ]}
-            onChange={(padding) =>
-              onStyleChange({ padding: padding as HomePageSectionStyle["padding"] })
-            }
-          />
-          <StyleSelect
-            label="Background style"
-            value={section.style.bgStyle}
-            options={[
-              { value: "slate", label: "Default dark slate" },
-              { value: "black", label: "Pure black" },
-              { value: "outline", label: "Accent border outline" },
-              { value: "carbon", label: "Carbon card wrapper" },
-            ]}
-            onChange={(bgStyle) =>
-              onStyleChange({ bgStyle: bgStyle as HomePageSectionStyle["bgStyle"] })
-            }
-          />
-          <StyleSelect
-            label="Text color override"
-            value={section.style.textColor}
-            options={[
-              { value: "light", label: "Default light / white" },
-              { value: "accent", label: "High-contrast accent" },
-              { value: "muted", label: "Muted grey" },
-            ]}
-            onChange={(textColor) =>
-              onStyleChange({ textColor: textColor as HomePageSectionStyle["textColor"] })
-            }
-          />
-          <StyleSelect
-            label="Highlight color"
-            value={section.style.accentMode}
-            options={[
-              { value: "brand", label: "Brand orange" },
-              { value: "custom", label: "Custom highlight" },
-            ]}
-            onChange={(accentMode) =>
-              onStyleChange({ accentMode: accentMode as HomePageSectionStyle["accentMode"] })
-            }
-          />
-          {section.style.accentMode === "custom" && (
-            <label className="block">
-              <span className="mb-2 block font-mono text-[9px] uppercase tracking-widest text-[#929491]">
-                Custom highlight color
-              </span>
-              <div className="flex h-10 items-center gap-3 border border-white/10 bg-[#121416] px-3">
-                <input
-                  type="color"
-                  aria-label="Custom highlight color"
-                  value={section.style.accentColor}
-                  onChange={(event) => onStyleChange({ accentColor: event.target.value })}
-                  className="h-7 w-10 cursor-pointer border-0 bg-transparent p-0"
-                />
-                <span className="font-mono text-xs uppercase text-[#bdbdb5]">
-                  {section.style.accentColor}
-                </span>
-              </div>
-            </label>
-          )}
+          <ImagePreview src={content.imageUrl} />
         </div>
-      </details>
+      )}
 
       {(section.type === "hero" ||
         section.type === "banner" ||
@@ -832,37 +705,6 @@ function SectionEditor({
         </div>
       </div>
     </div>
-  );
-}
-
-function StyleSelect({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  options: { value: string; label: string }[];
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-2 block font-mono text-[9px] uppercase tracking-widest text-[#929491]">
-        {label}
-      </span>
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="h-10 w-full border border-white/10 bg-[#121416] px-3 text-xs text-[#ece8df] outline-none focus:border-[#ed6228]"
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
   );
 }
 
